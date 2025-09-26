@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Script from 'next/script'
 
 interface Props {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function CaseDetailPage({ params }: Props) {

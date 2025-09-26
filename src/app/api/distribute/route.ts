@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { CaseRepository } from '@/lib/supabase'
+import { Case } from '@/lib/types'
 
 // 简单的密码验证中间件
 function verifyPassword(request: NextRequest): boolean {
@@ -13,7 +12,7 @@ function verifyPassword(request: NextRequest): boolean {
 }
 
 // 生成 Telegram 消息格式
-function generateTelegramMessage(caseData: any): string {
+function generateTelegramMessage(caseData: Case): string {
   return `💼 *${caseData.title}*
 
 ${caseData.description}
@@ -27,7 +26,7 @@ ${caseData.description}
 }
 
 // 生成 Twitter 消息格式
-function generateTwitterMessage(caseData: any): string {
+function generateTwitterMessage(caseData: Case): string {
   // Twitter 有字符限制，需要简洁
   const hashtags = ['#副业', '#创业', '#赚钱', '#sidehustle'].join(' ')
   const maxContentLength = 280 - hashtags.length - 20 // 留出链接空间

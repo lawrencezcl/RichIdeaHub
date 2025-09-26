@@ -20,18 +20,6 @@ interface RedditResponse {
   };
 }
 
-// ProductHunt API响应类型定义
-interface ProductHuntPost {
-  id: string;
-  name: string;
-  tagline: string;
-  description: string;
-  website: string;
-  url: string;
-  topics: Array<{ name: string }>;
-  created_at: string;
-}
-
 // Reddit数据抓取服务
 class RedditFetcher {
   static async fetchCases(): Promise<RawCaseData[]> {

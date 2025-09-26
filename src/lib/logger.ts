@@ -4,7 +4,7 @@ interface LogEntry {
   level: 'info' | 'warn' | 'error' | 'debug';
   service: string;
   action: string;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   correlationId?: string;
   duration?: number;
 }
@@ -17,7 +17,7 @@ class Logger {
   private static formatLogEntry(
     level: LogEntry['level'],
     action: string,
-    details: Record<string, any> = {},
+    details: Record<string, unknown> = {},
     correlationId?: string,
     duration?: number
   ): LogEntry {
@@ -56,17 +56,17 @@ class Logger {
     }
   }
 
-  static info(action: string, details: Record<string, any> = {}, correlationId?: string): void {
+  static info(action: string, details: Record<string, unknown> = {}, correlationId?: string): void {
     const entry = this.formatLogEntry('info', action, details, correlationId);
     this.outputLog(entry);
   }
 
-  static warn(action: string, details: Record<string, any> = {}, correlationId?: string): void {
+  static warn(action: string, details: Record<string, unknown> = {}, correlationId?: string): void {
     const entry = this.formatLogEntry('warn', action, details, correlationId);
     this.outputLog(entry);
   }
 
-  static error(action: string, error: Error | string, details: Record<string, any> = {}, correlationId?: string): void {
+  static error(action: string, error: Error | string, details: Record<string, unknown> = {}, correlationId?: string): void {
     const errorMessage = error instanceof Error ? error.message : error;
     const errorDetails = error instanceof Error ? {
       ...details,
@@ -84,18 +84,18 @@ class Logger {
     this.outputLog(entry);
   }
 
-  static debug(action: string, details: Record<string, any> = {}, correlationId?: string): void {
+  static debug(action: string, details: Record<string, unknown> = {}, correlationId?: string): void {
     const entry = this.formatLogEntry('debug', action, details, correlationId);
     this.outputLog(entry);
   }
 
   // 计时器功能
-  static timer(action: string, details: Record<string, any> = {}, correlationId?: string) {
+  static timer(action: string, details: Record<string, unknown> = {}, correlationId?: string) {
     const startTime = Date.now();
     const timerId = `timer_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     return {
-      stop: (additionalDetails: Record<string, any> = {}) => {
+      stop: (additionalDetails: Record<string, unknown> = {}) => {
         const duration = Date.now() - startTime;
         this.info(action, {
           ...details,
@@ -112,7 +112,7 @@ class Logger {
   static async monitor<T>(
     action: string,
     fn: () => Promise<T>,
-    details: Record<string, any> = {},
+    details: Record<string, unknown> = {},
     correlationId?: string
   ): Promise<T> {
     const timer = this.timer(action, details, correlationId);
@@ -132,7 +132,7 @@ class Logger {
   static logFetch(
     source: string,
     action: 'start' | 'success' | 'error',
-    details: Record<string, any> = {}
+    details: Record<string, unknown> = {}
   ): void {
     const correlationId = `fetch_${source}_${Date.now()}`;
 
@@ -152,7 +152,7 @@ class Logger {
   // AI处理专用日志
   static logAIProcessing(
     action: 'start' | 'success' | 'error',
-    details: Record<string, any> = {}
+    details: Record<string, unknown> = {}
   ): void {
     const correlationId = `ai_${Date.now()}`;
 
@@ -173,7 +173,7 @@ class Logger {
   static logDatabase(
     operation: string,
     action: 'start' | 'success' | 'error',
-    details: Record<string, any> = {}
+    details: Record<string, unknown> = {}
   ): void {
     const correlationId = `db_${operation}_${Date.now()}`;
 

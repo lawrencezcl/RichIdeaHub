@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { CaseRepository } from '@/lib/supabase'
 
 // 获取所有案例（管理后台用）

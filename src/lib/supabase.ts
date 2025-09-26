@@ -11,12 +11,12 @@ const pool = new Pool({
 
 // 数据库操作类
 export class CaseRepository {
-  // 获取已发布案例（前端使用）
+  // 获取所有案例（前端使用，保持向后兼容）
   static async getPublishedCases(limit = 20, offset = 0): Promise<Case[]> {
     const client = await pool.connect()
     try {
       const result = await client.query(
-        'SELECT * FROM cases WHERE published = true ORDER BY created_at DESC LIMIT $1 OFFSET $2',
+        'SELECT * FROM cases ORDER BY created_at DESC LIMIT $1 OFFSET $2',
         [limit, offset]
       )
       return result.rows
@@ -33,7 +33,7 @@ export class CaseRepository {
     const client = await pool.connect()
     try {
       const result = await client.query(
-        'SELECT * FROM cases WHERE id = $1 AND published = true',
+        'SELECT * FROM cases WHERE id = $1',
         [id]
       )
       return result.rows[0] || null

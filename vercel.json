@@ -4,5 +4,8 @@
       "path": "/api/fetch",
       "schedule": "0 * * * *"
     }
-  ]
+  ],
+  "github": {
+    "silent": true
+  }
 }

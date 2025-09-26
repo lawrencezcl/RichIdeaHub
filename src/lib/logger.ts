@@ -144,7 +144,7 @@ class Logger {
         this.info('data_fetch_success', { source, ...details }, correlationId);
         break;
       case 'error':
-        this.error('data_fetch_error', new Error(details.error || 'Unknown fetch error'), { source, ...details }, correlationId);
+        this.error('data_fetch_error', new Error(typeof details.error === 'string' ? details.error : 'Unknown fetch error'), { source, ...details }, correlationId);
         break;
     }
   }
@@ -164,7 +164,7 @@ class Logger {
         this.info('ai_processing_success', { ...details }, correlationId);
         break;
       case 'error':
-        this.error('ai_processing_error', new Error(details.error || 'AI processing failed'), { ...details }, correlationId);
+        this.error('ai_processing_error', new Error(typeof details.error === 'string' ? details.error : 'AI processing failed'), { ...details }, correlationId);
         break;
     }
   }
@@ -185,7 +185,7 @@ class Logger {
         this.debug('database_operation_success', { operation, ...details }, correlationId);
         break;
       case 'error':
-        this.error('database_operation_error', new Error(details.error || 'Database operation failed'), { operation, ...details }, correlationId);
+        this.error('database_operation_error', new Error(typeof details.error === 'string' ? details.error : 'Database operation failed'), { operation, ...details }, correlationId);
         break;
     }
   }

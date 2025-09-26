@@ -5,7 +5,7 @@ import { Suspense } from 'react'
 
 async function CasesList() {
   try {
-    const cases = await CaseRepository.getPublishedCases(20, 0)
+    const cases = await CaseRepository.getAllCases(20, 0)
 
     if (!cases || cases.length === 0) {
       return (

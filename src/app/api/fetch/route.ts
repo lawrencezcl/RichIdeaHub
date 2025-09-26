@@ -548,7 +548,7 @@ class DataProcessor {
             steps: processed.steps,
             source_url: raw.url,
             raw_content: raw.content,
-            published: false, // 默认不发布，需要人工审核
+            published: true, // 直接发布，无需审核
             // 新增字段 - 使用AI处理的数据或默认值
             category: processed.category || '副业',
             difficulty: processed.difficulty || 'beginner',

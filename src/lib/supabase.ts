@@ -45,17 +45,18 @@ export class CaseRepository {
     }
   }
 
-  // 获取所有案例（管理后台使用）
-  static async getAllCases(): Promise<Case[]> {
+  // 获取所有案例（前端使用，支持分页）
+  static async getAllCases(limit = 20, offset = 0): Promise<Case[]> {
     const client = await pool.connect()
     try {
       const result = await client.query(
-        'SELECT * FROM cases ORDER BY created_at DESC'
+        'SELECT * FROM cases ORDER BY created_at DESC LIMIT $1 OFFSET $2',
+        [limit, offset]
       )
       return result.rows
     } catch (error) {
-      console.error('获取所有案例失败:', error)
-      throw new Error('获取所有案例失败')
+      console.error('获取案例失败:', error)
+      throw new Error('获取案例失败')
     } finally {
       client.release()
     }

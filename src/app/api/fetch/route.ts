@@ -435,7 +435,7 @@ class DataManager {
 
     // 去重：根据source_url
     const uniqueCases = allCases.filter((case_, index, self) =>
-      index === self.findIndex(c => c.source_url === case_.source_url)
+      index === self.findIndex(c => c.url === case_.url)
     )
 
     const endTime = Date.now()

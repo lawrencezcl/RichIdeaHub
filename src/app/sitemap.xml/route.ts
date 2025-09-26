@@ -29,7 +29,7 @@ export async function GET() {
       sitemapEntries.push({
         url: `${baseUrl}/cases/${case_.id}`,
         lastModified: new Date(case_.created_at).toISOString(),
-        changeFrequency: 'monthly' as const,
+        changeFrequency: 'daily' as const,
         priority: 0.8
       })
     })

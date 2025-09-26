@@ -1,4 +1,5 @@
 import { ProcessedCase, RawCaseData } from './types'
+import Logger from './logger'
 
 // 支持多个AI提供商
 type AIProvider = 'openai' | 'deepseek' | 'doubao' | 'qwen'
@@ -96,32 +97,59 @@ export class AIProcessor {
   }
   
   static async processContent(raw: RawCaseData): Promise<ProcessedCase> {
+    const correlationId = `ai_process_${raw.source_id}_${Date.now()}`
+    Logger.logAIProcessing('start', {
+      sourceId: raw.source_id,
+      titleLength: raw.title.length,
+      contentLength: raw.content.length
+    })
+
     const prompt = `
-请将以下副业内容结构化为JSON格式。请严格按照要求返回纯JSON，不要包含任何其他文字。
+请将以下副业内容智能结构化为详细的JSON格式。基于原文内容进行分析和推理，提供尽可能完整的信息。
 
 原始内容：
 标题: ${raw.title}
-内容: ${raw.content.slice(0, 2000)}
+内容: ${raw.content.slice(0, 3000)}
 
-请返回以下格式的JSON（只返回JSON，不要其他内容）：
+请返回以下格式的JSON（只返回JSON，不要任何其他文字）：
 {
-  "title": "简洁的标题（10字以内）",
-  "description": "简要描述（50字以内）",
-  "income": "收入范围（如：$500-1000/月 或 未知）",
-  "time_required": "时间投入（如：5小时/周 或 未知）",
-  "tools": "工具列表，逗号分隔（如：Notion,Stripe,Instagram）",
-  "steps": "步骤列表，换行分隔（每个步骤简洁明了）"
+  "title": "简洁标题（15字以内）",
+  "description": "详细描述（100字以内）",
+  "income": "收入范围（如：$500-2000/月）",
+  "time_required": "时间投入（如：10-20小时/周）",
+  "tools": "工具列表，逗号分隔",
+  "steps": "实施步骤，换行分隔",
+  "category": "分类（如：电商、服务、数字产品等）",
+  "difficulty": "难度等级（beginner/intermediate/advanced）",
+  "investment_required": "投资需求（如：低、中、高或具体金额）",
+  "skills_needed": "所需技能，逗号分隔",
+  "target_audience": "目标用户群体",
+  "potential_risks": "潜在风险和挑战",
+  "success_rate": "成功率估计（如：高、中等、低）",
+  "time_to_profit": "盈利时间（如：1-3个月）",
+  "scalability": "可扩展性（如：低、中等、高）",
+  "location_flexible": true/false,
+  "age_restriction": "年龄限制或要求",
+  "revenue_model": "收入模式（如：服务收费、产品销售、订阅等）",
+  "competition_level": "竞争程度（低、中等、高）",
+  "market_trend": "市场趋势（如：增长、稳定、下降）",
+  "key_metrics": "关键成功指标",
+  "tags": ["标签1", "标签2", "标签3"]
 }
 
-重要规则：
-1. 不要编造任何信息，如果原文没有明确提到收入或时间，请填写"未知"
-2. 步骤要具体可操作，每个步骤20字以内
-3. 工具名称要准确，使用官方名称
-4. 只返回JSON格式，不要任何解释文字
+分析原则：
+1. 基于原文内容进行智能推理，如果原文没有明确信息，根据上下文合理推断
+2. 收入和时间投入要根据内容线索合理估计
+3. 难度等级根据所需技能和投资综合判断
+4. 目标用户和风险因素要基于内容特点分析
+5. 只返回JSON格式，不要任何解释文字
+6. 所有字段都要填写，不要留空
 `
 
     try {
+      const timer = Logger.timer('ai_content_processing', { sourceId: raw.source_id }, correlationId)
       const client = this.getClient()
+
       const response = await client.chat([
         { role: 'user', content: prompt }
       ])
@@ -138,9 +166,11 @@ export class AIProcessor {
         const cleanContent = content.replace(/```json\n?|\n?```/g, '').trim()
         parsedContent = JSON.parse(cleanContent)
       } catch (parseError) {
-        console.error('JSON解析失败:', parseError)
-        console.error('原始内容:', content)
-        
+        Logger.error('ai_json_parse_failed', parseError as Error, {
+          sourceId: raw.source_id,
+          rawContent: content.slice(0, 200)
+        }, correlationId)
+
         // 如果解析失败，返回默认结构
         parsedContent = {
           title: raw.title.slice(0, 50),
@@ -148,23 +178,67 @@ export class AIProcessor {
           income: '未知',
           time_required: '未知',
           tools: '待补充',
-          steps: '1. 查看原始内容\n2. 手动整理信息'
+          steps: '1. 查看原始内容\n2. 手动整理信息',
+          category: '副业',
+          difficulty: 'beginner',
+          investment_required: '低',
+          skills_needed: '基础技能',
+          target_audience: '大众用户',
+          potential_risks: '市场竞争',
+          success_rate: '中等',
+          time_to_profit: '1-3个月',
+          scalability: '中等',
+          location_flexible: true,
+          age_restriction: '无限制',
+          revenue_model: '服务收费',
+          competition_level: '中等',
+          market_trend: '稳定增长',
+          key_metrics: '收入、客户满意度',
+          tags: ['副业', '在线赚钱']
         }
       }
 
       // 验证和清理数据
-      return {
+      const result = {
         title: this.cleanText(parsedContent.title || raw.title, 50),
         description: this.cleanText(parsedContent.description || '', 100),
         income: this.cleanText(parsedContent.income || '未知', 30),
         time_required: this.cleanText(parsedContent.time_required || '未知', 30),
         tools: this.cleanText(parsedContent.tools || '', 200),
-        steps: this.cleanText(parsedContent.steps || '', 500)
+        steps: this.cleanText(parsedContent.steps || '', 500),
+        category: this.cleanText(parsedContent.category || '副业', 20),
+        difficulty: parsedContent.difficulty || 'beginner',
+        investment_required: this.cleanText(parsedContent.investment_required || '低', 20),
+        skills_needed: this.cleanText(parsedContent.skills_needed || '基础技能', 100),
+        target_audience: this.cleanText(parsedContent.target_audience || '大众用户', 50),
+        potential_risks: this.cleanText(parsedContent.potential_risks || '市场竞争', 100),
+        success_rate: this.cleanText(parsedContent.success_rate || '中等', 20),
+        time_to_profit: this.cleanText(parsedContent.time_to_profit || '1-3个月', 20),
+        scalability: this.cleanText(parsedContent.scalability || '中等', 20),
+        location_flexible: parsedContent.location_flexible ?? true,
+        age_restriction: this.cleanText(parsedContent.age_restriction || '无限制', 20),
+        revenue_model: this.cleanText(parsedContent.revenue_model || '服务收费', 30),
+        competition_level: this.cleanText(parsedContent.competition_level || '中等', 20),
+        market_trend: this.cleanText(parsedContent.market_trend || '稳定增长', 20),
+        key_metrics: this.cleanText(parsedContent.key_metrics || '收入、客户满意度', 50),
+        tags: parsedContent.tags || ['副业', '在线赚钱']
       }
 
+      const duration = timer.stop({ category: result.category, difficulty: result.difficulty })
+      Logger.logAIProcessing('success', {
+        sourceId: raw.source_id,
+        duration,
+        category: result.category
+      })
+
+      return result
+
     } catch (error) {
-      console.error('AI处理失败:', error)
-      
+      Logger.error('ai_processing_failed', error as Error, {
+        sourceId: raw.source_id,
+        title: raw.title.slice(0, 50)
+      }, correlationId)
+
       // 返回基础结构化数据
       return {
         title: raw.title.slice(0, 50),
@@ -172,7 +246,23 @@ export class AIProcessor {
         income: '未知',
         time_required: '未知',
         tools: '待补充',
-        steps: '请查看原始内容了解详情'
+        steps: '请查看原始内容了解详情',
+        category: '副业',
+        difficulty: 'beginner',
+        investment_required: '低',
+        skills_needed: '基础技能',
+        target_audience: '大众用户',
+        potential_risks: '市场竞争',
+        success_rate: '中等',
+        time_to_profit: '1-3个月',
+        scalability: '中等',
+        location_flexible: true,
+        age_restriction: '无限制',
+        revenue_model: '服务收费',
+        competition_level: '中等',
+        market_trend: '稳定增长',
+        key_metrics: '收入、客户满意度',
+        tags: ['副业', '在线赚钱']
       }
     }
   }
@@ -206,7 +296,23 @@ export class AIProcessor {
             income: '未知',
             time_required: '未知',
             tools: '待补充',
-            steps: '请查看原始内容'
+            steps: '请查看原始内容',
+            category: '副业',
+            difficulty: 'beginner',
+            investment_required: '低',
+            skills_needed: '基础技能',
+            target_audience: '大众用户',
+            potential_risks: '市场竞争',
+            success_rate: '中等',
+            time_to_profit: '1-3个月',
+            scalability: '中等',
+            location_flexible: true,
+            age_restriction: '无限制',
+            revenue_model: '服务收费',
+            competition_level: '中等',
+            market_trend: '稳定增长',
+            key_metrics: '收入、客户满意度',
+            tags: ['副业', '在线赚钱']
           }
         })
       )

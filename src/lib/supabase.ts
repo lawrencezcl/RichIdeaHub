@@ -66,9 +66,17 @@ export class CaseRepository {
     const client = await pool.connect()
     try {
       const result = await client.query(
-        `INSERT INTO cases (title, description, income, time_required, tools, steps, source_url, raw_content, published)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-         RETURNING *`,
+        `INSERT INTO cases (
+          title, description, income, time_required, tools, steps, source_url, raw_content, published,
+          category, difficulty, investment_required, skills_needed, target_audience, potential_risks,
+          success_rate, time_to_profit, scalability, location_flexible, age_restriction, revenue_model,
+          competition_level, market_trend, key_metrics, author, upvotes, comments_count, tags
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9,
+          $10, $11, $12, $13, $14, $15,
+          $16, $17, $18, $19, $20, $21,
+          $22, $23, $24, $25, $26, $27, $28
+        ) RETURNING *`,
         [
           caseData.title,
           caseData.description,
@@ -78,7 +86,26 @@ export class CaseRepository {
           caseData.steps,
           caseData.source_url,
           caseData.raw_content,
-          caseData.published
+          caseData.published,
+          caseData.category,
+          caseData.difficulty,
+          caseData.investment_required,
+          caseData.skills_needed,
+          caseData.target_audience,
+          caseData.potential_risks,
+          caseData.success_rate,
+          caseData.time_to_profit,
+          caseData.scalability,
+          caseData.location_flexible,
+          caseData.age_restriction,
+          caseData.revenue_model,
+          caseData.competition_level,
+          caseData.market_trend,
+          caseData.key_metrics,
+          caseData.author,
+          caseData.upvotes,
+          caseData.comments_count,
+          caseData.tags
         ]
       )
       return result.rows[0]
@@ -106,6 +133,23 @@ export class CaseRepository {
     }
   }
 
+  // 批量更新发布状态
+  static async batchUpdatePublishStatus(ids: number[], published: boolean): Promise<number> {
+    const client = await pool.connect()
+    try {
+      const result = await client.query(
+        'UPDATE cases SET published = $1 WHERE id = ANY($2::int[]) RETURNING id',
+        [published, ids]
+      )
+      return result.rowCount
+    } catch (error) {
+      console.error('批量更新发布状态失败:', error)
+      throw new Error('批量更新发布状态失败')
+    } finally {
+      client.release()
+    }
+  }
+
   // 检查案例是否已存在（根据source_url）
   static async caseExists(sourceUrl: string): Promise<boolean> {
     const client = await pool.connect()
@@ -118,6 +162,21 @@ export class CaseRepository {
     } catch (error) {
       console.error('检查案例存在性失败:', error)
       return false
+    } finally {
+      client.release()
+    }
+  }
+
+  // 清理所有数据
+  static async clearAllData(): Promise<number> {
+    const client = await pool.connect()
+    try {
+      const result = await client.query('DELETE FROM cases RETURNING id')
+      console.log(`已清理 ${result.rowCount} 条数据`)
+      return result.rowCount
+    } catch (error) {
+      console.error('清理数据失败:', error)
+      throw new Error('清理数据失败')
     } finally {
       client.release()
     }
@@ -153,12 +212,34 @@ export class CaseRepository {
           source_url TEXT,
           raw_content TEXT,
           published BOOLEAN DEFAULT false,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          -- 新增字段
+          category TEXT,
+          difficulty TEXT CHECK (difficulty IN ('beginner', 'intermediate', 'advanced')),
+          investment_required TEXT,
+          skills_needed TEXT,
+          target_audience TEXT,
+          potential_risks TEXT,
+          success_rate TEXT,
+          time_to_profit TEXT,
+          scalability TEXT,
+          location_flexible BOOLEAN DEFAULT false,
+          age_restriction TEXT,
+          revenue_model TEXT,
+          competition_level TEXT,
+          market_trend TEXT,
+          key_metrics TEXT,
+          author TEXT,
+          upvotes INTEGER DEFAULT 0,
+          comments_count INTEGER DEFAULT 0,
+          tags TEXT[]
         );
-        
+
         CREATE INDEX IF NOT EXISTS idx_cases_published ON cases(published);
         CREATE INDEX IF NOT EXISTS idx_cases_created ON cases(created_at DESC);
         CREATE INDEX IF NOT EXISTS idx_cases_source_url ON cases(source_url);
+        CREATE INDEX IF NOT EXISTS idx_cases_category ON cases(category);
+        CREATE INDEX IF NOT EXISTS idx_cases_difficulty ON cases(difficulty);
       `)
       console.log('数据库表初始化成功')
     } catch (error) {

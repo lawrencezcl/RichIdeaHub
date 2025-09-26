@@ -10,16 +10,17 @@ export async function GET(
   { params }: { params: Params }
 ) {
   try {
-    const id = parseInt(params.id)
-    
-    if (isNaN(id)) {
+    const { id } = await params
+    const caseId = parseInt(id)
+
+    if (isNaN(caseId)) {
       return NextResponse.json({
         success: false,
         error: '无效的案例ID'
       }, { status: 400 })
     }
 
-    const case_ = await CaseRepository.getCaseById(id)
+    const case_ = await CaseRepository.getCaseById(caseId)
     
     if (!case_) {
       return NextResponse.json({

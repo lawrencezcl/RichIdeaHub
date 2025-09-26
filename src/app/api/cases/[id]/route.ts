@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { CaseRepository } from '@/lib/supabase'
 
-interface Params {
-  id: string
-}
-
 export async function GET(
   request: NextRequest,
-  { params }: { params: Params }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params

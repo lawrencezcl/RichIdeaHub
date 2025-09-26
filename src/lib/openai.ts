@@ -298,7 +298,7 @@ export class AIProcessor {
             tools: '待补充',
             steps: '请查看原始内容',
             category: '副业',
-            difficulty: 'beginner',
+            difficulty: 'beginner' as const,
             investment_required: '低',
             skills_needed: '基础技能',
             target_audience: '大众用户',
@@ -313,7 +313,7 @@ export class AIProcessor {
             market_trend: '稳定增长',
             key_metrics: '收入、客户满意度',
             tags: ['副业', '在线赚钱']
-          }
+          } as ProcessedCase
         })
       )
       

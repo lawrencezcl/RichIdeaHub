@@ -141,7 +141,7 @@ export class CaseRepository {
         'UPDATE cases SET published = $1 WHERE id = ANY($2::int[]) RETURNING id',
         [published, ids]
       )
-      return result.rowCount
+      return result.rowCount || 0
     } catch (error) {
       console.error('批量更新发布状态失败:', error)
       throw new Error('批量更新发布状态失败')
@@ -173,7 +173,7 @@ export class CaseRepository {
     try {
       const result = await client.query('DELETE FROM cases RETURNING id')
       console.log(`已清理 ${result.rowCount} 条数据`)
-      return result.rowCount
+      return result.rowCount || 0
     } catch (error) {
       console.error('清理数据失败:', error)
       throw new Error('清理数据失败')

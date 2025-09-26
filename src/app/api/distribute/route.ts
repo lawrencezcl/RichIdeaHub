@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CaseRepository } from '@/lib/supabase'
 import { Case } from '@/lib/types'
 
 // 简单的密码验证中间件

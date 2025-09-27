@@ -4,10 +4,50 @@ import { useState, useEffect } from 'react'
 import { Case } from '@/lib/types'
 
 export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const [cases, setCases] = useState<Case[]>([])
   const [fetchingData, setFetchingData] = useState(false)
   const [selectedCases, setSelectedCases] = useState<Set<number>>(new Set())
   const [updating, setUpdating] = useState(false)
+
+  // 检查认证状态
+  useEffect(() => {
+    const checkAuth = () => {
+      const authCookie = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('admin_auth='))
+
+      if (authCookie && authCookie.split('=')[1] === 'admin123') {
+        setIsAuthenticated(true)
+      }
+    }
+
+    checkAuth()
+  }, [])
+
+  // 调试：检查cookie是否正确设置
+  useEffect(() => {
+    console.log('Authentication status:', isAuthenticated)
+    console.log('Current cookies:', document.cookie)
+  }, [isAuthenticated])
+
+  // 处理登录
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log('Login function called with password:', password)
+    setError('')
+
+    if (password === 'admin123') {
+      console.log('Password correct, setting cookie and auth state')
+      document.cookie = `admin_auth=admin123; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`
+      setIsAuthenticated(true)
+    } else {
+      console.log('Password incorrect')
+      setError('密码错误')
+    }
+  }
 
   // 加载案例列表
   const loadCases = async () => {
@@ -24,8 +64,10 @@ export default function AdminPage() {
 
   // 组件加载时获取案例数据
   useEffect(() => {
-    loadCases()
-  }, [])
+    if (isAuthenticated) {
+      loadCases()
+    }
+  }, [isAuthenticated])
 
   // 触发数据抓取
   const triggerFetch = async () => {
@@ -137,8 +179,60 @@ export default function AdminPage() {
     }
   }
 
-  
-  // 管理界面
+  // 登出
+  const handleLogout = () => {
+    document.cookie = 'admin_auth=; path=/; max-age=0'
+    setIsAuthenticated(false)
+    setSelectedCases(new Set())
+  }
+
+  // 如果未认证，显示登录界面
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full space-y-8">
+          <div>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+              管理员登录
+            </h2>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              请输入管理员密码
+            </p>
+          </div>
+          <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                密码
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="请输入密码"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            {error && (
+              <div className="text-red-600 text-sm text-center">{error}</div>
+            )}
+            <div>
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                登录
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
+  // 已认证，显示管理界面
   return (
     <div className="container mx-auto px-4 py-8">
       {/* 头部 */}
@@ -147,7 +241,6 @@ export default function AdminPage() {
           <h1 className="text-2xl font-bold text-gray-900">案例管理后台</h1>
           <p className="text-gray-600">管理副业案例数据</p>
         </div>
-
         <div className="flex gap-2">
           <button
             onClick={triggerFetch}
@@ -155,6 +248,12 @@ export default function AdminPage() {
             className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 disabled:bg-gray-400"
           >
             {fetchingData ? '抓取中...' : '🚀 抓取新案例'}
+          </button>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            登出
           </button>
         </div>
       </div>

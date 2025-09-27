@@ -7,10 +7,5 @@
   ],
   "github": {
     "silent": true
-  },
-  "functions": {
-    "app/admin/login/page.tsx": {
-      "runtime": "nodejs18.x"
-    }
   }
 }

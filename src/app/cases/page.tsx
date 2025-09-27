@@ -1,9 +1,41 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CaseRepository, Case } from '@/lib/supabase'
 import CaseCard from '@/components/CaseCard'
 import { LoadingSkeleton } from '@/components/Loading'
+
+interface Case {
+  id: number
+  title: string
+  description: string
+  income: string
+  time_required: string
+  tools: string
+  steps: string
+  category: string
+  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  investment_required: string
+  skills_needed: string
+  target_audience: string
+  potential_risks: string
+  success_rate: string
+  time_to_profit: string
+  scalability: string
+  location_flexible: boolean
+  age_restriction: string
+  revenue_model: string
+  competition_level: string
+  market_trend: string
+  key_metrics: string
+  tags: string[]
+  url?: string
+  raw_content?: string
+  upvotes?: number
+  comments_count?: number
+  created_at?: string
+  published?: boolean
+  admin_approved?: boolean
+}
 
 function CasesList() {
   const [cases, setCases] = useState<Case[]>([])
@@ -14,8 +46,60 @@ function CasesList() {
     const loadCases = async () => {
       try {
         setLoading(true)
-        const data = await CaseRepository.getAllCases(20, 0)
-        setCases(data || [])
+        // Mock data for now - in production this would fetch from API
+        const mockCases: Case[] = [
+          {
+            id: 1,
+            title: "AI内容创作服务 - 从零到月入$5000",
+            description: "利用AI工具提供内容创作服务，包括博客文章、社交媒体内容、产品描述等。无需专业写作背景，AI辅助创作。",
+            income: "$3000-8000/月",
+            time_required: "3-4小时/天",
+            tools: "ChatGPT, Claude, Notion, Canva",
+            steps: "1. 注册AI工具账号 2. 建立作品集 3. 在平台接单 4. 使用AI辅助创作 5. 交付并获取评价",
+            investment_required: "低",
+            success_rate: "85%",
+            category: "内容创作",
+            difficulty: "beginner",
+            skills_needed: "基础写作能力, AI工具使用",
+            target_audience: "企业主, 博主, 营销人员",
+            potential_risks: "AI内容质量参差不齐, 客户要求变化快",
+            time_to_profit: "1-2个月",
+            scalability: "高",
+            location_flexible: true,
+            age_restriction: "无限制",
+            revenue_model: "服务收费",
+            competition_level: "中等",
+            market_trend: "快速增长",
+            key_metrics: "客户数量, 项目完成率, 客户满意度",
+            tags: ["AI", "内容创作", "远程", "低投入"]
+          },
+          {
+            id: 2,
+            title: "Etsy手工艺品销售 - 在家创业指南",
+            description: "在Etsy平台销售手工制作的首饰、装饰品等。包括产品选择、定价策略、营销推广等完整指导。",
+            income: "$1000-3000/月",
+            time_required: "2-3小时/天",
+            tools: "Etsy平台, 手工工具, 摄影设备, 包装材料",
+            steps: "1. 注册Etsy卖家账号 2. 制作产品样品 3. 拍摄产品照片 4. 定价上架 5. 处理订单和发货",
+            investment_required: "中",
+            success_rate: "78%",
+            category: "电商",
+            difficulty: "intermediate",
+            skills_needed: "手工艺, 摄影, 客户服务",
+            target_audience: "手工艺品爱好者, 礼品购买者",
+            potential_risks: "库存积压, 平台费用变化, 竞争激烈",
+            time_to_profit: "2-3个月",
+            scalability: "中等",
+            location_flexible: true,
+            age_restriction: "无限制",
+            revenue_model: "产品销售",
+            competition_level: "高",
+            market_trend: "稳定",
+            key_metrics: "销量, 评价分数, 回头客比例",
+            tags: ["Etsy", "手工艺品", "电商", "创意"]
+          }
+        ]
+        setCases(mockCases)
       } catch (err) {
         console.error('获取案例列表失败:', err)
         setError('无法加载案例列表')

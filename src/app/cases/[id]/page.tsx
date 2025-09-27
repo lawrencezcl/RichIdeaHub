@@ -1,7 +1,9 @@
-import { CaseRepository } from '@/lib/supabase'
+import { CaseRepository } from '@/lib/supabase-client'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Script from 'next/script'
+import UserFeedback from '@/components/UserFeedback'
+import MiniStats from '@/components/MiniStats'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -79,6 +81,9 @@ export default async function CaseDetailPage({ params }: Props) {
             {case_.comments_count !== undefined && <span>💬 {case_.comments_count} 评论</span>}
           </div>
         </header>
+
+        {/* 案例统计信息 */}
+        <MiniStats variant="case-specific" showRealTime={true} />
 
         {/* 核心信息网格 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -342,6 +347,9 @@ export default async function CaseDetailPage({ params }: Props) {
             </div>
           </div>
         )}
+
+        {/* 用户反馈区域 */}
+        <UserFeedback caseData={case_} />
 
         {/* 底部信息 */}
         <footer className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

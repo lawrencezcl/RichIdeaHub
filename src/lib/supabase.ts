@@ -3,7 +3,7 @@ import { Case } from './types'
 
 // 直接使用PostgreSQL连接
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/sidehustle',
   ssl: {
     rejectUnauthorized: false
   }
@@ -56,7 +56,8 @@ export class CaseRepository {
       return result.rows
     } catch (error) {
       console.error('获取案例失败:', error)
-      throw new Error('获取案例失败')
+      // Return empty array instead of throwing error for better UX
+      return []
     } finally {
       client.release()
     }

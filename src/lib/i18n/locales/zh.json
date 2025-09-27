@@ -1,0 +1,116 @@
+{
+  "homepage": {
+    "hero": {
+      "title": "全球真实副业案例库｜零基础可做，月入3k+",
+      "subtitle": "100+可落地案例，含收益/步骤/避坑，宝妈/学生/上班族都能选",
+      "updated": "2024实测更新",
+      "primary_cta": "找匹配副业",
+      "secondary_cta": "看热门案例"
+    },
+    "case_display": {
+      "title": "热门副业案例（2024实测）",
+      "view_all": "查看全部 →",
+      "filters": {
+        "all": "全部",
+        "passive_income": "被动收入",
+        "no_experience": "零基础",
+        "for_moms": "宝妈专属",
+        "for_students": "学生党"
+      },
+      "card": {
+        "income": "收入",
+        "time": "时间",
+        "skills": "技能",
+        "source": "来源",
+        "favorite": "收藏",
+        "view_details": "查看详情"
+      }
+    },
+    "trust": {
+      "title": "用户真实反馈",
+      "stats": {
+        "cases": "100+ 真实案例",
+        "users": "5k+ 注册用户",
+        "satisfaction": "98% 好评率"
+      }
+    },
+    "email_capture": {
+      "title": "获取最新副业案例",
+      "subtitle": "每周1封邮件，含独家案例+避坑指南，无广告",
+      "email_placeholder": "输入你的邮箱",
+      "subscribe_button": "立即订阅",
+      "privacy": "我们尊重隐私，不会分享你的邮箱",
+      "privacy_link": "查看隐私政策",
+      "success": "✓ 订阅成功",
+      "error": "请输入有效邮箱"
+    }
+  },
+  "cases": {
+    "title": "副业案例",
+    "filters": {
+      "all": "全部案例",
+      "popular": "热门",
+      "latest": "最新",
+      "passive": "被动收入"
+    },
+    "details": {
+      "income": "月收入",
+      "time_required": "所需时间",
+      "investment": "启动成本",
+      "difficulty": "难度",
+      "skills": "所需技能",
+      "steps": "实施步骤",
+      "risks": "风险与应对",
+      "tools": "所需工具",
+      "source": "来源",
+      "back_to_list": "返回案例列表"
+    },
+    "feedback": {
+      "title": "分享你的体验",
+      "placeholder": "分享这个副业的体验...",
+      "submit": "提交反馈",
+      "types": {
+        "success": "成功经验",
+        "challenge": "遇到挑战",
+        "improvement": "改进建议"
+      }
+    }
+  },
+  "admin": {
+    "title": "管理面板",
+    "login": "登录",
+    "logout": "退出",
+    "dashboard": "仪表板",
+    "cases": "案例管理",
+    "pending": "待审核",
+    "approved": "已通过",
+    "rejected": "已拒绝",
+    "fetch": "抓取新案例",
+    "actions": {
+      "approve": "通过",
+      "reject": "拒绝",
+      "edit": "编辑",
+      "delete": "删除"
+    },
+    "stats": {
+      "total_cases": "总案例数",
+      "pending_review": "待审核",
+      "approved_cases": "已通过",
+      "rejected_cases": "已拒绝"
+    }
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "retry": "重试",
+    "close": "关闭",
+    "save": "保存",
+    "cancel": "取消",
+    "confirm": "确认",
+    "search": "搜索",
+    "filter": "筛选",
+    "sort": "排序",
+    "language": "语言"
+  }
+}

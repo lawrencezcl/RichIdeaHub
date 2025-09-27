@@ -1,0 +1,13 @@
+{
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/cases/route": "app/api/cases/route.js",
+  "/api/fetch/route": "app/api/fetch/route.js",
+  "/page": "app/page.js",
+  "/cases/page": "app/cases/page.js",
+  "/cases/[id]/page": "app/cases/[id]/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/favorites/page": "app/favorites/page.js",
+  "/[locale]/page": "app/[locale]/page.js",
+  "/[locale]/cases/page": "app/[locale]/cases/page.js"
+}

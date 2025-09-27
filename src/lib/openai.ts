@@ -84,11 +84,16 @@ class UniversalAIClient {
 
 export class AIProcessor {
   private static client: UniversalAIClient
-  
+  private static fallbackMode: boolean = process.env.ENABLE_FALLBACK_MODE === 'true'
+
   private static getClient(): UniversalAIClient {
     if (!this.client) {
       const config = getAIConfig()
       if (!config.apiKey) {
+        if (this.fallbackMode) {
+          console.log('AI API密钥未配置，使用备用模式处理数据')
+          return null
+        }
         throw new Error(`未配置 ${config.provider} API密钥`)
       }
       this.client = new UniversalAIClient(config)
@@ -103,6 +108,13 @@ export class AIProcessor {
       titleLength: raw.title.length,
       contentLength: raw.content.length
     })
+
+    // 检查是否为备用模式
+    const client = this.getClient()
+    if (!client) {
+      console.log(`使用备用模式处理案例: ${raw.title}`)
+      return this.generateFallbackData(raw)
+    }
 
     const prompt = `
 请将以下副业内容智能结构化为详细的JSON格式。基于原文内容进行分析和推理，提供尽可能完整的信息。
@@ -148,7 +160,6 @@ export class AIProcessor {
 
     try {
       const timer = Logger.timer('ai_content_processing', { sourceId: raw.source_id }, correlationId)
-      const client = this.getClient()
 
       const response = await client.chat([
         { role: 'user', content: prompt }
@@ -240,30 +251,58 @@ export class AIProcessor {
       }, correlationId)
 
       // 返回基础结构化数据
-      return {
-        title: raw.title.slice(0, 50),
-        description: raw.content || '这是一个来自社区的副业创意分享，请查看原始内容获取更多信息',
-        income: '视情况而定',
-        time_required: '灵活安排',
-        tools: '请参考原始内容',
-        steps: '1. 点击原始链接\n2. 了解详细实施步骤\n3. 评估是否适合自己',
-        category: '副业',
-        difficulty: 'beginner',
-        investment_required: '低',
-        skills_needed: '基础技能',
-        target_audience: '大众用户',
-        potential_risks: '市场竞争',
-        success_rate: '中等',
-        time_to_profit: '1-3个月',
-        scalability: '中等',
-        location_flexible: true,
-        age_restriction: '无限制',
-        revenue_model: '服务收费',
-        competition_level: '中等',
-        market_trend: '稳定增长',
-        key_metrics: '收入、客户满意度',
-        tags: ['副业', '在线赚钱']
-      }
+      return this.generateFallbackData(raw)
+    }
+  }
+
+  // 生成备用数据（当AI不可用时）
+  private static generateFallbackData(raw: RawCaseData): ProcessedCase {
+    // 简单的关键词匹配来分类
+    const contentLower = (raw.title + ' ' + raw.content).toLowerCase()
+    let category = '副业'
+    let difficulty: 'beginner' | 'intermediate' | 'advanced' = 'beginner'
+    let investment = '低'
+
+    if (contentLower.includes('编程') || contentLower.includes('开发') || contentLower.includes('coding')) {
+      category = '技术开发'
+      difficulty = 'intermediate'
+    } else if (contentLower.includes('电商') || contentLower.includes('amazon') || contentLower.includes('shopify')) {
+      category = '电商'
+      investment = '中'
+    } else if (contentLower.includes('写作') || contentLower.includes('content') || contentLower.includes('blog')) {
+      category = '内容创作'
+      difficulty = 'beginner'
+    } else if (contentLower.includes('设计') || contentLower.includes('design')) {
+      category = '设计'
+      difficulty = 'intermediate'
+    } else if (contentLower.includes('营销') || contentLower.includes('marketing')) {
+      category = '营销推广'
+      difficulty = 'intermediate'
+    }
+
+    return {
+      title: raw.title.slice(0, 50),
+      description: raw.content ? raw.content.slice(0, 100) + '...' : '这是一个来自社区的副业创意分享',
+      income: '视情况而定',
+      time_required: '灵活安排',
+      tools: '请参考原始内容',
+      steps: `1. 查看原始链接: ${raw.source_url}\n2. 了解详细实施步骤\n3. 评估是否适合自己`,
+      category: category,
+      difficulty: difficulty,
+      investment_required: investment,
+      skills_needed: '请参考原始内容',
+      target_audience: '大众用户',
+      potential_risks: '市场竞争',
+      success_rate: '中等',
+      time_to_profit: '1-3个月',
+      scalability: '中等',
+      location_flexible: true,
+      age_restriction: '无限制',
+      revenue_model: '服务收费',
+      competition_level: '中等',
+      market_trend: '稳定增长',
+      key_metrics: '收入、客户满意度',
+      tags: [category, '副业', '在线赚钱']
     }
   }
 

@@ -1,0 +1,116 @@
+{
+  "homepage": {
+    "hero": {
+      "title": "Global Side Hustle Cases | $3k+/Month, No Experience Needed",
+      "subtitle": "100+ Actionable Cases (Income/Steps/Tips) for Stay-at-Home Moms/Students/9-5ers",
+      "updated": "2024 Tested & Updated",
+      "primary_cta": "Find Your Side Hustle",
+      "secondary_cta": "View Top Cases"
+    },
+    "case_display": {
+      "title": "Top Side Hustles (2024 Tested)",
+      "view_all": "View All →",
+      "filters": {
+        "all": "All",
+        "passive_income": "Passive Income",
+        "no_experience": "No Experience",
+        "for_moms": "For Moms",
+        "for_students": "For Students"
+      },
+      "card": {
+        "income": "Income",
+        "time": "Time",
+        "skills": "Skills",
+        "source": "Source",
+        "favorite": "Favorite",
+        "view_details": "View Details"
+      }
+    },
+    "trust": {
+      "title": "Real User Feedback",
+      "stats": {
+        "cases": "100+ Real Cases",
+        "users": "5k+ Registered Users",
+        "satisfaction": "98% Positive Reviews"
+      }
+    },
+    "email_capture": {
+      "title": "Get Latest Side Hustle Cases",
+      "subtitle": "1 Email/Week with Exclusive Cases & Tips, No Spam",
+      "email_placeholder": "Enter Your Email",
+      "subscribe_button": "Subscribe Now",
+      "privacy": "We Respect Privacy, No Email Sharing",
+      "privacy_link": "Privacy Policy",
+      "success": "✓ Subscription Successful",
+      "error": "Please enter a valid email"
+    }
+  },
+  "cases": {
+    "title": "Side Hustle Cases",
+    "filters": {
+      "all": "All Cases",
+      "popular": "Popular",
+      "latest": "Latest",
+      "passive": "Passive Income"
+    },
+    "details": {
+      "income": "Monthly Income",
+      "time_required": "Time Required",
+      "investment": "Initial Investment",
+      "difficulty": "Difficulty",
+      "skills": "Skills Needed",
+      "steps": "Implementation Steps",
+      "risks": "Risks & Solutions",
+      "tools": "Required Tools",
+      "source": "Source",
+      "back_to_list": "Back to Cases"
+    },
+    "feedback": {
+      "title": "Share Your Experience",
+      "placeholder": "Share your experience with this side hustle...",
+      "submit": "Submit Feedback",
+      "types": {
+        "success": "Success Story",
+        "challenge": "Challenge Faced",
+        "improvement": "Improvement Suggestion"
+      }
+    }
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "login": "Login",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "cases": "Cases Management",
+    "pending": "Pending Review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "fetch": "Fetch New Cases",
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "stats": {
+      "total_cases": "Total Cases",
+      "pending_review": "Pending Review",
+      "approved_cases": "Approved Cases",
+      "rejected_cases": "Rejected Cases"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "retry": "Retry",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "language": "Language"
+  }
+}

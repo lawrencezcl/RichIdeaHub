@@ -13,13 +13,17 @@ export default function AdminLogin() {
     setError('')
 
     // 简单的密码验证 - 生产环境应该使用更安全的方式
-    const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123'
+    const ADMIN_PASSWORD = 'admin123' // 使用与middleware相同的默认密码
+
+    console.log('Login attempt:', { password, expected: ADMIN_PASSWORD })
 
     if (password === ADMIN_PASSWORD) {
       // 设置认证cookie
-      document.cookie = `admin_auth=${ADMIN_PASSWORD}; path=/; max-age=${60 * 60 * 24}` // 24小时
+      document.cookie = `admin_auth=${ADMIN_PASSWORD}; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`
+      console.log('Cookie set, redirecting to /admin')
       router.push('/admin')
     } else {
+      console.log('Password mismatch')
       setError('密码错误')
     }
   }

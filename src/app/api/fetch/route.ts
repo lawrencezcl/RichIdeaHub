@@ -509,6 +509,9 @@ class DataManager {
   }
 }
 
+// 导出DataManager供其他模块使用
+export { DataManager }
+
 // 数据处理和存储服务
 class DataProcessor {
   static async processAndStore(rawCases: RawCaseData[]): Promise<number> {

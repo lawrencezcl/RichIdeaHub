@@ -174,7 +174,7 @@ export class AIProcessor {
         // 如果解析失败，返回默认结构
         parsedContent = {
           title: raw.title.slice(0, 50),
-          description: raw.description || '这是一个来自社区的副业创意分享',
+          description: raw.content || '这是一个来自社区的副业创意分享',
           income: '视情况而定',
           time_required: '灵活安排',
           tools: '请参考原始内容',
@@ -242,7 +242,7 @@ export class AIProcessor {
       // 返回基础结构化数据
       return {
         title: raw.title.slice(0, 50),
-        description: raw.description || '这是一个来自社区的副业创意分享，请查看原始内容获取更多信息',
+        description: raw.content || '这是一个来自社区的副业创意分享，请查看原始内容获取更多信息',
         income: '视情况而定',
         time_required: '灵活安排',
         tools: '请参考原始内容',
@@ -292,7 +292,7 @@ export class AIProcessor {
           console.error(`处理案例失败: ${raw.title}`, error)
           return {
             title: raw.title.slice(0, 50),
-            description: raw.description || '这是一个来自社区的副业创意分享，处理过程中遇到一些问题',
+            description: raw.content || '这是一个来自社区的副业创意分享，处理过程中遇到一些问题',
             income: '视情况而定',
             time_required: '灵活安排',
             tools: '请参考原始内容',

@@ -32,6 +32,9 @@ export interface Case {
   upvotes?: number
   comments_count?: number
   tags?: string[]
+  // 管理字段
+  admin_approved?: boolean
+  admin_notes?: string
 }
 
 export interface RawCaseData {

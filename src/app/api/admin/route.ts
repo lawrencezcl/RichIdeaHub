@@ -26,7 +26,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { action } = body
+    const { action, caseIds } = body
 
     if (action === 'clear_data') {
       const deletedCount = await CaseRepository.clearAllData()
@@ -34,6 +34,24 @@ export async function POST(request: NextRequest) {
         success: true,
         message: `已清理 ${deletedCount} 条数据`,
         deletedCount
+      })
+    }
+
+    if (action === 'approve' && Array.isArray(caseIds)) {
+      const approvedCount = await CaseRepository.batchUpdatePublishStatus(caseIds, true)
+      return NextResponse.json({
+        success: true,
+        message: `已审批 ${approvedCount} 个案例`,
+        approvedCount
+      })
+    }
+
+    if (action === 'reject' && Array.isArray(caseIds)) {
+      const rejectedCount = await CaseRepository.batchUpdatePublishStatus(caseIds, false)
+      return NextResponse.json({
+        success: true,
+        message: `已拒绝 ${rejectedCount} 个案例`,
+        rejectedCount
       })
     }
 

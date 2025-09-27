@@ -71,12 +71,14 @@ export class CaseRepository {
           title, description, income, time_required, tools, steps, source_url, raw_content, published,
           category, difficulty, investment_required, skills_needed, target_audience, potential_risks,
           success_rate, time_to_profit, scalability, location_flexible, age_restriction, revenue_model,
-          competition_level, market_trend, key_metrics, author, upvotes, comments_count, tags
+          competition_level, market_trend, key_metrics, author, upvotes, comments_count, tags,
+          admin_approved, admin_notes
         ) VALUES (
           $1, $2, $3, $4, $5, $6, $7, $8, $9,
           $10, $11, $12, $13, $14, $15,
           $16, $17, $18, $19, $20, $21,
-          $22, $23, $24, $25, $26, $27, $28
+          $22, $23, $24, $25, $26, $27, $28,
+          $29, $30
         ) RETURNING *`,
         [
           caseData.title,
@@ -106,7 +108,9 @@ export class CaseRepository {
           caseData.author,
           caseData.upvotes,
           caseData.comments_count,
-          caseData.tags
+          caseData.tags,
+          caseData.admin_approved || false,
+          caseData.admin_notes || null
         ]
       )
       return result.rows[0]
@@ -233,7 +237,10 @@ export class CaseRepository {
           author TEXT,
           upvotes INTEGER DEFAULT 0,
           comments_count INTEGER DEFAULT 0,
-          tags TEXT[]
+          tags TEXT[],
+          -- 管理字段
+          admin_approved BOOLEAN DEFAULT false,
+          admin_notes TEXT
         );
 
         CREATE INDEX IF NOT EXISTS idx_cases_published ON cases(published);

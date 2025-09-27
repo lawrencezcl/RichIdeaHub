@@ -12,29 +12,31 @@ interface Case {
   time_required: string
   tools: string
   steps: string
-  category: string
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
-  investment_required: string
-  skills_needed: string
-  target_audience: string
-  potential_risks: string
-  success_rate: string
-  time_to_profit: string
-  scalability: string
-  location_flexible: boolean
-  age_restriction: string
-  revenue_model: string
-  competition_level: string
-  market_trend: string
-  key_metrics: string
-  tags: string[]
   source_url: string
-  raw_content?: string
+  raw_content: string
+  published: boolean
+  created_at: string
+  category?: string
+  difficulty?: 'beginner' | 'intermediate' | 'advanced'
+  investment_required?: string
+  skills_needed?: string
+  target_audience?: string
+  potential_risks?: string
+  success_rate?: string
+  time_to_profit?: string
+  scalability?: string
+  location_flexible?: boolean
+  age_restriction?: string
+  revenue_model?: string
+  competition_level?: string
+  market_trend?: string
+  key_metrics?: string
+  author?: string
   upvotes?: number
   comments_count?: number
-  created_at?: string
-  published?: boolean
+  tags?: string[]
   admin_approved?: boolean
+  admin_notes?: string
   url?: string
 }
 
@@ -57,6 +59,10 @@ function CasesList() {
             time_required: "3-4小时/天",
             tools: "ChatGPT, Claude, Notion, Canva",
             steps: "1. 注册AI工具账号 2. 建立作品集 3. 在平台接单 4. 使用AI辅助创作 5. 交付并获取评价",
+            source_url: "https://example.com/ai-content",
+            raw_content: "详细内容：利用AI工具提供内容创作服务的完整指南...",
+            published: true,
+            created_at: "2024-06-15T10:30:00Z",
             investment_required: "低",
             success_rate: "85%",
             category: "内容创作",
@@ -72,7 +78,6 @@ function CasesList() {
             competition_level: "中等",
             market_trend: "快速增长",
             key_metrics: "客户数量, 项目完成率, 客户满意度",
-            source_url: "https://example.com/ai-content",
             tags: ["AI", "内容创作", "远程", "低投入"]
           },
           {
@@ -83,6 +88,10 @@ function CasesList() {
             time_required: "2-3小时/天",
             tools: "Etsy平台, 手工工具, 摄影设备, 包装材料",
             steps: "1. 注册Etsy卖家账号 2. 制作产品样品 3. 拍摄产品照片 4. 定价上架 5. 处理订单和发货",
+            source_url: "https://example.com/etsy-handmade",
+            raw_content: "详细内容：在Etsy平台销售手工制作品的完整指南...",
+            published: true,
+            created_at: "2024-06-14T14:20:00Z",
             investment_required: "中",
             success_rate: "78%",
             category: "电商",
@@ -98,7 +107,6 @@ function CasesList() {
             competition_level: "高",
             market_trend: "稳定",
             key_metrics: "销量, 评价分数, 回头客比例",
-            source_url: "https://example.com/etsy-handmade",
             tags: ["Etsy", "手工艺品", "电商", "创意"]
           }
         ]

@@ -377,6 +377,10 @@ export class AIProcessor {
   static async testConnection(): Promise<boolean> {
     try {
       const client = this.getClient()
+      if (!client) {
+        console.log('AI客户端未配置，跳过连接测试')
+        return false
+      }
       await client.chat([{ role: 'user', content: '测试连接' }])
       return true
     } catch (error) {

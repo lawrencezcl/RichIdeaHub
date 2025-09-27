@@ -28,13 +28,14 @@ interface Case {
   market_trend: string
   key_metrics: string
   tags: string[]
-  source_url?: string
+  source_url: string
   raw_content?: string
   upvotes?: number
   comments_count?: number
   created_at?: string
   published?: boolean
   admin_approved?: boolean
+  url?: string
 }
 
 function CasesList() {

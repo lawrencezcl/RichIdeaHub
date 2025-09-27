@@ -86,7 +86,7 @@ export class AIProcessor {
   private static client: UniversalAIClient
   private static fallbackMode: boolean = process.env.ENABLE_FALLBACK_MODE === 'true'
 
-  private static getClient(): UniversalAIClient {
+  private static getClient(): UniversalAIClient | null {
     if (!this.client) {
       const config = getAIConfig()
       if (!config.apiKey) {

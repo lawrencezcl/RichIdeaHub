@@ -1,6 +1,6 @@
 import './globals.css'
 import '../styles/critical.css'
-import { Analytics } from "@vercel/analytics/next"
+import ClientAnalytics from "@/components/ClientAnalytics"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 
@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
         {children}
-        <Analytics />
+        <ClientAnalytics />
       </body>
     </html>
   )

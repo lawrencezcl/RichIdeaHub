@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   TrendingUp,
@@ -19,9 +19,14 @@ import CaseCard from '@/components/CaseCard'
 import { Case } from '@/lib/types'
 
 export default function AdminDashboard() {
+  const [isClient, setIsClient] = useState(false)
   const [activeTab, setActiveTab] = useState('overview')
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // Mock recent cases for admin view
   const recentCases: Case[] = [
@@ -111,6 +116,17 @@ export default function AdminDashboard() {
     case_.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (case_.category && case_.category.toLowerCase().includes(searchQuery.toLowerCase()))
   )
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading admin dashboard...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -27,24 +27,16 @@ export default function AdminPage() {
     checkAuth()
   }, [])
 
-  // 调试：检查cookie是否正确设置
-  useEffect(() => {
-    console.log('Authentication status:', isAuthenticated)
-    console.log('Current cookies:', document.cookie)
-  }, [isAuthenticated])
-
+  
   // 处理登录
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Login function called with password:', password)
     setError('')
 
     if (password === 'admin123') {
-      console.log('Password correct, setting cookie and auth state')
       document.cookie = `admin_auth=admin123; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`
       setIsAuthenticated(true)
     } else {
-      console.log('Password incorrect')
       setError('密码错误')
     }
   }

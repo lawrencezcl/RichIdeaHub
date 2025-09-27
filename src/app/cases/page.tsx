@@ -1,46 +1,43 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { CaseRepository, Case } from '@/lib/supabase'
 import CaseCard from '@/components/CaseCard'
 import { LoadingSkeleton } from '@/components/Loading'
-import { Suspense } from 'react'
 
-async function CasesList() {
-  try {
-    const cases = await CaseRepository.getAllCases(20, 0)
+function CasesList() {
+  const [cases, setCases] = useState<Case[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-    if (!cases || cases.length === 0) {
-      return (
-        <div className="text-center py-16">
-          <div className="max-w-md mx-auto">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">
-              暂无案例
-            </h3>
-            <p className="text-gray-600 mb-6 leading-relaxed">
-              我们正在收集更多优质的副业案例，请稍后再来查看。
-            </p>
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
-              <p className="text-sm text-blue-800">
-                💡 建议管理员先运行数据抓取，获取一些案例数据
-              </p>
-            </div>
-          </div>
-        </div>
-      )
+  useEffect(() => {
+    const loadCases = async () => {
+      try {
+        setLoading(true)
+        const data = await CaseRepository.getAllCases(20, 0)
+        setCases(data || [])
+      } catch (err) {
+        console.error('获取案例列表失败:', err)
+        setError('无法加载案例列表')
+      } finally {
+        setLoading(false)
+      }
     }
 
+    loadCases()
+  }, [])
+
+  if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cases.map((case_: Case) => (
-          <CaseCard key={case_.id} case={case_} />
+        {[...Array(6)].map((_, i) => (
+          <LoadingSkeleton key={i} />
         ))}
       </div>
     )
-  } catch (error) {
-    console.error('获取案例列表失败:', error)
+  }
+
+  if (error) {
     return (
       <div className="text-center py-16">
         <div className="max-w-md mx-auto">
@@ -53,7 +50,7 @@ async function CasesList() {
             加载失败
           </h3>
           <p className="text-gray-600 mb-6 leading-relaxed">
-            无法加载案例列表，请检查数据库连接配置。
+            {error}
           </p>
           <div className="bg-red-50 p-4 rounded-xl border border-red-100">
             <p className="text-sm text-red-800">
@@ -64,17 +61,41 @@ async function CasesList() {
       </div>
     )
   }
-}
 
-function LoadingGrid() {
+  if (!cases || cases.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <div className="max-w-md mx-auto">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-3">
+            暂无案例
+          </h3>
+          <p className="text-gray-600 mb-6 leading-relaxed">
+            我们正在收集更多优质的副业案例，请稍后再来查看。
+          </p>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
+            <p className="text-sm text-blue-800">
+              💡 建议管理员先运行数据抓取，获取一些案例数据
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[...Array(6)].map((_, i) => (
-        <LoadingSkeleton key={i} />
+      {cases.map((case_: Case) => (
+        <CaseCard key={case_.id} case={case_} />
       ))}
     </div>
   )
 }
+
 
 export default function CasesPage() {
   return (
@@ -141,9 +162,7 @@ export default function CasesPage() {
           </div>
         </div>
 
-        <Suspense fallback={<LoadingGrid />}>
-          <CasesList />
-        </Suspense>
+        <CasesList />
       </div>
 
       {/* CTA Section */}

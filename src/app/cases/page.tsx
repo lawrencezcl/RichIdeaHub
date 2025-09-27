@@ -28,7 +28,7 @@ interface Case {
   market_trend: string
   key_metrics: string
   tags: string[]
-  url?: string
+  source_url?: string
   raw_content?: string
   upvotes?: number
   comments_count?: number
@@ -71,6 +71,7 @@ function CasesList() {
             competition_level: "中等",
             market_trend: "快速增长",
             key_metrics: "客户数量, 项目完成率, 客户满意度",
+            source_url: "https://example.com/ai-content",
             tags: ["AI", "内容创作", "远程", "低投入"]
           },
           {
@@ -96,6 +97,7 @@ function CasesList() {
             competition_level: "高",
             market_trend: "稳定",
             key_metrics: "销量, 评价分数, 回头客比例",
+            source_url: "https://example.com/etsy-handmade",
             tags: ["Etsy", "手工艺品", "电商", "创意"]
           }
         ]

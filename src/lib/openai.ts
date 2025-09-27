@@ -286,7 +286,7 @@ export class AIProcessor {
       income: '视情况而定',
       time_required: '灵活安排',
       tools: '请参考原始内容',
-      steps: `1. 查看原始链接: ${raw.source_url}\n2. 了解详细实施步骤\n3. 评估是否适合自己`,
+      steps: `1. 查看原始链接: ${raw.url}\n2. 了解详细实施步骤\n3. 评估是否适合自己`,
       category: category,
       difficulty: difficulty,
       investment_required: investment,

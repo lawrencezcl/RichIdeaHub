@@ -5,8 +5,9 @@ import type { NextRequest } from 'next/server'
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'
 
 export function middleware(request: NextRequest) {
-  // 只检查admin路径
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  // 只检查admin路径，但排除登录页面
+  if (request.nextUrl.pathname.startsWith('/admin') &&
+      !request.nextUrl.pathname.startsWith('/admin/login')) {
     // 检查是否有认证cookie
     const authCookie = request.cookies.get('admin_auth')
 

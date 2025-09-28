@@ -78,7 +78,6 @@ function CasesList() {
 
         const response = await fetch(`/api/cases?${params.toString()}`)
         const data = await response.json()
-        console.log('API Response:', data) // Debug log
 
         if (data.success) {
           setCases(data.data || [])

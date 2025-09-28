@@ -1,4 +1,4 @@
-import { CaseRepository } from '@/lib/supabase-client'
+import { CaseRepository } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Script from 'next/script'

@@ -48,26 +48,26 @@ export async function POST() {
 
           // 更新案例数据
           await CaseRepository.updateCaseData(case_.id, {
-            income: processedData.income,
-            time_required: processedData.time_required,
-            tools: processedData.tools,
-            steps: processedData.steps,
-            category: processedData.category,
-            difficulty: processedData.difficulty,
-            investment_required: processedData.investment_required,
-            skills_needed: processedData.skills_needed,
-            target_audience: processedData.target_audience,
-            potential_risks: processedData.potential_risks,
-            success_rate: processedData.success_rate,
-            time_to_profit: processedData.time_to_profit,
-            scalability: processedData.scalability,
-            location_flexible: processedData.location_flexible,
-            age_restriction: processedData.age_restriction,
-            revenue_model: processedData.revenue_model,
-            competition_level: processedData.competition_level,
-            market_trend: processedData.market_trend,
-            key_metrics: processedData.key_metrics,
-            tags: processedData.tags
+            income: processedData.income || case_.income || '',
+            time_required: processedData.time_required || case_.time_required || '',
+            tools: processedData.tools || case_.tools || '',
+            steps: processedData.steps || case_.steps || '',
+            category: processedData.category || case_.category || '',
+            difficulty: processedData.difficulty || case_.difficulty || '',
+            investment_required: processedData.investment_required || case_.investment_required || '',
+            skills_needed: processedData.skills_needed || case_.skills_needed || '',
+            target_audience: processedData.target_audience || case_.target_audience || '',
+            potential_risks: processedData.potential_risks || case_.potential_risks || '',
+            success_rate: processedData.success_rate || case_.success_rate || '',
+            time_to_profit: processedData.time_to_profit || case_.time_to_profit || '',
+            scalability: processedData.scalability || case_.scalability || '',
+            location_flexible: processedData.location_flexible ?? case_.location_flexible ?? false,
+            age_restriction: processedData.age_restriction || case_.age_restriction || '',
+            revenue_model: processedData.revenue_model || case_.revenue_model || '',
+            competition_level: processedData.competition_level || case_.competition_level || '',
+            market_trend: processedData.market_trend || case_.market_trend || '',
+            key_metrics: processedData.key_metrics || case_.key_metrics || '',
+            tags: processedData.tags || case_.tags || []
           })
 
           updatedCount++

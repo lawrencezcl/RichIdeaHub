@@ -300,7 +300,7 @@ export class AIProcessor {
     const keyMetrics = this.generateKeyMetrics(categoryAnalysis.category, revenueModel)
 
     // 生成标签
-    const tags = this.generateTags(categoryAnalysis.category, skillsAnalysis.skills, revenueModel)
+    const tags = this.generateTags(categoryAnalysis.category, Array.isArray(skillsAnalysis.skills) ? skillsAnalysis.skills : [skillsAnalysis.skills].filter(Boolean), revenueModel)
 
     return {
       title: raw.title.slice(0, 50),
@@ -426,7 +426,7 @@ export class AIProcessor {
         '金融服务': '$1000-10000/月',
         '生活服务': '$300-2000/月'
       }
-      income = categoryIncome[text.includes('技术开发') ? '技术开发' : '副业'] || '$500-2000/月'
+      income = categoryIncome[text.includes('技术开发') ? '技术开发' : '技术开发'] || '$500-2000/月'
     }
 
     return { income, sources }
@@ -743,7 +743,7 @@ export class AIProcessor {
   private static generateTags(category: string, skills: string[], revenueModel: { model: string }): string[] {
     const baseTags = [category, '副业', '在线赚钱']
 
-    const skillTags = skills.split(', ').slice(0, 2)
+    const skillTags = skills.slice(0, 2)
     const revenueTags = revenueModel.model.includes('订阅') ? ['订阅制'] :
                        revenueModel.model.includes('产品') ? ['产品销售'] : ['服务收费']
 

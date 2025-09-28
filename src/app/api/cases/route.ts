@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'created_at'
     const sortOrder = searchParams.get('sortOrder') || 'desc'
 
-    const cases = await CaseRepository.getPublishedCases(limit * 2, 0) // Get more for filtering
+    const cases = await CaseRepository.getAllCases(10000, 0) // Get all cases for filtering
 
     // Apply filters
     let filteredCases = cases

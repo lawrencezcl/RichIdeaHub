@@ -381,7 +381,7 @@ export default function CasesPage() {
             <div className="text-sm text-gray-600">数据源</div>
           </div>
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="text-3xl font-bold text-purple-600 mb-2">100+</div>
+            <div className="text-3xl font-bold text-purple-600 mb-2">{total > 0 ? total : '100+'}</div>
             <div className="text-sm text-gray-600">案例库</div>
           </div>
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">

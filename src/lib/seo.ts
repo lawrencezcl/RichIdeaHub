@@ -29,6 +29,7 @@ export function generateSEOMetadata(config: SEOConfig) {
   const fullTitle = title.includes('Rich Idea Hub') ? title : `${title} | Rich Idea Hub`
   const fullCanonical = canonical ? `${siteUrl}${canonical}` : siteUrl
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const metadata: any = {
     title: fullTitle,
     description,

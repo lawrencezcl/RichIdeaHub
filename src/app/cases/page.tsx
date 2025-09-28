@@ -78,10 +78,11 @@ function CasesList() {
 
         const response = await fetch(`/api/cases?${params.toString()}`)
         const data = await response.json()
+        console.log('API Response:', data) // Debug log
 
         if (data.success) {
-          setCases(data.data)
-          setTotal(data.total)
+          setCases(data.data || [])
+          setTotal(data.total || 0)
         } else {
           setError(data.error || '获取案例列表失败')
         }

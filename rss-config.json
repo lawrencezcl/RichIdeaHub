@@ -1,0 +1,236 @@
+{
+  "rss_feeds": {
+    "global_business": [
+      {
+        "name": "Entrepreneur.com",
+        "url": "https://www.entrepreneur.com/latest.rss",
+        "category": "business",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Fast Company",
+        "url": "https://www.fastcompany.com/rss",
+        "category": "business",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "TechCrunch",
+        "url": "https://techcrunch.com/feed/",
+        "category": "tech",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "CNBC",
+        "url": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+        "category": "business",
+        "language": "en",
+        "active": true
+      }
+    ],
+    "side_hustles": [
+      {
+        "name": "Side Hustle Nation",
+        "url": "https://sidehustlenation.com/feed/",
+        "category": "side-hustle",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Smart Passive Income",
+        "url": "https://www.smartpassiveincome.com/feed/",
+        "category": "passive-income",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Millennial Money Man",
+        "url": "https://millennialmoneyman.com/feed/",
+        "category": "side-hustle",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Financial Samurai",
+        "url": "https://www.financialsamurai.com/feed/",
+        "category": "finance",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Good Financial Cents",
+        "url": "https://www.goodfinancialcents.com/feed/",
+        "category": "finance",
+        "language": "en",
+        "active": true
+      }
+    ],
+    "digital_business": [
+      {
+        "name": "Neil Patel",
+        "url": "https://neilpatel.com/feed/",
+        "category": "marketing",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Copyblogger",
+        "url": "https://copyblogger.com/feed/",
+        "category": "content",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Smart Blogger",
+        "url": "https://smartblogger.com/feed/",
+        "category": "blogging",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Backlinko",
+        "url": "https://backlinko.com/feed/",
+        "category": "seo",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Social Media Examiner",
+        "url": "https://www.socialmediaexaminer.com/feed/",
+        "category": "social-media",
+        "language": "en",
+        "active": true
+      }
+    ],
+    "tech_startups": [
+      {
+        "name": "Hacker News",
+        "url": "https://hnrss.org/frontpage",
+        "category": "tech",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Product Hunt",
+        "url": "https://feeds.feedburner.com/producthunt",
+        "category": "products",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Mashable",
+        "url": "https://mashable.com/feed",
+        "category": "tech",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "TechCrunch - Startups",
+        "url": "https://techcrunch.com/startups/feed/",
+        "category": "startup",
+        "language": "en",
+        "active": true
+      }
+    ],
+    "finance_investment": [
+      {
+        "name": "Money Morning",
+        "url": "https://moneymorning.com/feed/",
+        "category": "investment",
+        "language": "en",
+        "active": true
+      }
+    ],
+    "remote_work": [
+      {
+        "name": "We Work Remotely",
+        "url": "https://weworkremotely.com/remote-jobs.rss",
+        "category": "remote",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "FlexJobs",
+        "url": "https://www.flexjobs.com/blog/feed/",
+        "category": "remote",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "Upwork Blog",
+        "url": "https://www.upwork.com/blog/feed/",
+        "category": "freelance",
+        "language": "en",
+        "active": true
+      }
+    ],
+    "ecommerce": [
+      {
+        "name": "Shopify Blog",
+        "url": "https://www.shopify.com/blog/rss.xml",
+        "category": "ecommerce",
+        "language": "en",
+        "active": true
+      },
+      {
+        "name": "BigCommerce Blog",
+        "url": "https://www.bigcommerce.com/blog/rss/",
+        "category": "ecommerce",
+        "language": "en",
+        "active": true
+      }
+    ],
+    "chinese_business": [
+      {
+        "name": "36氪",
+        "url": "https://36kr.com/feed",
+        "category": "business",
+        "language": "zh",
+        "active": false
+      }
+    ],
+    "international": [
+      {
+        "name": "BBC Business",
+        "url": "http://feeds.bbci.co.uk/news/business/rss.xml",
+        "category": "business",
+        "language": "en",
+        "active": true
+      }
+    ]
+  },
+  "collection_settings": {
+    "max_items_per_feed": 10,
+    "batch_size": 3,
+    "rate_limit_delay_ms": 2000,
+    "database_batch_size": 20,
+    "database_delay_ms": 100,
+    "timeout_ms": 30000,
+    "retry_attempts": 3
+  },
+  "content_validation": {
+    "min_title_length": 10,
+    "max_title_length": 300,
+    "min_content_length": 50,
+    "max_content_length": 10000,
+    "business_keywords": [
+      "income", "money", "earn", "profit", "revenue", "salary", "business",
+      "startup", "entrepreneur", "freelance", "side hustle", "passive income",
+      "online", "remote", "invest", "make money", "career", "job", "work",
+      "marketing", "sales", "client", "customer", "service", "product",
+      "ecommerce", "digital", "strategy", "growth", "success"
+    ],
+    "banned_keywords": [
+      "porn", "adult", "nsfw", "drug", "illegal", "hack", "scam",
+      "gamble", "casino", "betting", "lottery", "mlm", "pyramid"
+    ]
+  },
+  "scheduling": {
+    "enabled": true,
+    "frequency_hours": 6,
+    "last_run": null,
+    "next_run": null
+  }
+}

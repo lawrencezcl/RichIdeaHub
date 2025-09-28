@@ -3,6 +3,10 @@
     {
       "path": "/api/fetch",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/rss-fetch",
+      "schedule": "0 */6 * * *"
     }
   ],
   "github": {

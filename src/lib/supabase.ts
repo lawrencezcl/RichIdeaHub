@@ -73,13 +73,13 @@ export class CaseRepository {
           category, difficulty, investment_required, skills_needed, target_audience, potential_risks,
           success_rate, time_to_profit, scalability, location_flexible, age_restriction, revenue_model,
           competition_level, market_trend, key_metrics, author, upvotes, comments_count, tags,
-          admin_approved, admin_notes
+          admin_approved, admin_notes, source_type
         ) VALUES (
           $1, $2, $3, $4, $5, $6, $7, $8, $9,
           $10, $11, $12, $13, $14, $15,
           $16, $17, $18, $19, $20, $21,
           $22, $23, $24, $25, $26, $27, $28,
-          $29, $30
+          $29, $30, $31
         ) RETURNING *`,
         [
           caseData.title,
@@ -111,7 +111,8 @@ export class CaseRepository {
           caseData.comments_count,
           caseData.tags,
           caseData.admin_approved || false,
-          caseData.admin_notes || null
+          caseData.admin_notes || null,
+          caseData.source_type || null
         ]
       )
       return result.rows[0]
@@ -241,7 +242,9 @@ export class CaseRepository {
           tags TEXT[],
           -- 管理字段
           admin_approved BOOLEAN DEFAULT false,
-          admin_notes TEXT
+          admin_notes TEXT,
+          -- 数据源类型
+          source_type TEXT CHECK (source_type IN ('reddit', 'producthunt', 'indiehackers', 'other'))
         );
 
         CREATE INDEX IF NOT EXISTS idx_cases_published ON cases(published);
@@ -249,11 +252,88 @@ export class CaseRepository {
         CREATE INDEX IF NOT EXISTS idx_cases_source_url ON cases(source_url);
         CREATE INDEX IF NOT EXISTS idx_cases_category ON cases(category);
         CREATE INDEX IF NOT EXISTS idx_cases_difficulty ON cases(difficulty);
+        CREATE INDEX IF NOT EXISTS idx_cases_source_type ON cases(source_type);
       `)
       console.log('数据库表初始化成功')
     } catch (error) {
       console.error('数据库表初始化失败:', error)
       throw new Error('数据库表初始化失败')
+    } finally {
+      client.release()
+    }
+  }
+
+  // 获取所有案例（管理后台用，支持搜索和过滤）
+  static async getAllCasesWithFilters(
+    search?: string,
+    sourceType?: string,
+    status?: string,
+    category?: string,
+    limit = 1000,
+    offset = 0
+  ): Promise<{ cases: Case[], total: number }> {
+    const client = await pool.connect()
+    try {
+      let query = 'SELECT * FROM cases WHERE 1=1'
+      const params: any[] = []
+      let paramIndex = 1
+
+      if (search) {
+        query += ` AND (title ILIKE $${paramIndex} OR description ILIKE $${paramIndex})`
+        params.push(`%${search}%`)
+        paramIndex++
+      }
+
+      if (sourceType && sourceType !== 'all') {
+        query += ` AND source_type = $${paramIndex}`
+        params.push(sourceType)
+        paramIndex++
+      }
+
+      if (status) {
+        if (status === 'published') {
+          query += ` AND published = true`
+        } else if (status === 'draft') {
+          query += ` AND published = false`
+        }
+      }
+
+      if (category && category !== 'all') {
+        query += ` AND category = $${paramIndex}`
+        params.push(category)
+        paramIndex++
+      }
+
+      // 获取总数
+      const countQuery = query.replace('SELECT * FROM', 'SELECT COUNT(*) FROM')
+      const countResult = await client.query(countQuery, params)
+      const total = parseInt(countResult.rows[0].count)
+
+      // 添加排序和分页
+      query += ' ORDER BY created_at DESC LIMIT $' + paramIndex + ' OFFSET $' + (paramIndex + 1)
+      params.push(limit, offset)
+
+      const result = await client.query(query, params)
+      return { cases: result.rows, total }
+    } catch (error) {
+      console.error('获取过滤案例失败:', error)
+      return { cases: [], total: 0 }
+    } finally {
+      client.release()
+    }
+  }
+
+  // 获取所有不同的分类
+  static async getAllCategories(): Promise<string[]> {
+    const client = await pool.connect()
+    try {
+      const result = await client.query(
+        'SELECT DISTINCT category FROM cases WHERE category IS NOT NULL AND category != \'\' ORDER BY category'
+      )
+      return result.rows.map(row => row.category)
+    } catch (error) {
+      console.error('获取分类失败:', error)
+      return []
     } finally {
       client.release()
     }

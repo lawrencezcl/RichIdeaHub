@@ -35,6 +35,8 @@ export interface Case {
   // 管理字段
   admin_approved?: boolean
   admin_notes?: string
+  // 数据源类型
+  source_type?: 'reddit' | 'producthunt' | 'indiehackers' | 'other'
 }
 
 export interface RawCaseData {

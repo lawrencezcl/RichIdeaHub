@@ -12,6 +12,17 @@ export default function AdminPage() {
   const [selectedCases, setSelectedCases] = useState<Set<number>>(new Set())
   const [updating, setUpdating] = useState(false)
 
+  // 搜索和过滤状态
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sourceFilter, setSourceFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [categoryFilter, setCategoryFilter] = useState('all')
+  const [categories, setCategories] = useState<string[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalCases, setTotalCases] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
+
   // 检查认证状态
   useEffect(() => {
     const checkAuth = () => {
@@ -42,15 +53,38 @@ export default function AdminPage() {
   }
 
   // 加载案例列表
-  const loadCases = async () => {
+  const loadCases = async (page = 1, resetFilters = false) => {
+    setIsLoading(true)
     try {
-      const response = await fetch('/api/admin')
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: '50'
+      })
+
+      if (searchTerm) params.append('search', searchTerm)
+      if (sourceFilter !== 'all') params.append('sourceType', sourceFilter)
+      if (statusFilter !== 'all') params.append('status', statusFilter)
+      if (categoryFilter !== 'all') params.append('category', categoryFilter)
+
+      const response = await fetch(`/api/admin?${params}`)
       const result = await response.json()
       if (result.success) {
         setCases(result.data)
+        setTotalCases(result.total)
+        setTotalPages(result.pagination?.totalPages || 1)
+        if (result.categories) {
+          setCategories(result.categories)
+        }
+        if (resetFilters) {
+          setCurrentPage(1)
+        } else {
+          setCurrentPage(page)
+        }
       }
-    } catch {
-      console.error('加载案例失败')
+    } catch (error) {
+      console.error('加载案例失败:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -60,6 +94,16 @@ export default function AdminPage() {
       loadCases()
     }
   }, [isAuthenticated])
+
+  // 搜索词变化时重新加载
+  useEffect(() => {
+    if (isAuthenticated) {
+      const timeoutId = setTimeout(() => {
+        loadCases(1, true)
+      }, 500)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [searchTerm, sourceFilter, statusFilter, categoryFilter])
 
   // 触发数据抓取
   const triggerFetch = async () => {
@@ -250,6 +294,103 @@ export default function AdminPage() {
         </div>
       </div>
 
+      {/* 搜索和过滤栏 */}
+      <div className="bg-white p-6 rounded-lg shadow mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {/* 搜索框 */}
+          <div className="lg:col-span-2">
+            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+              搜索案例
+            </label>
+            <input
+              id="search"
+              type="text"
+              placeholder="输入标题或描述关键词..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* 数据源过滤 */}
+          <div>
+            <label htmlFor="sourceFilter" className="block text-sm font-medium text-gray-700 mb-1">
+              数据源
+            </label>
+            <select
+              id="sourceFilter"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+            >
+              <option value="all">全部数据源</option>
+              <option value="reddit">Reddit</option>
+              <option value="producthunt">ProductHunt</option>
+              <option value="indiehackers">IndieHackers</option>
+              <option value="other">其他</option>
+            </select>
+          </div>
+
+          {/* 状态过滤 */}
+          <div>
+            <label htmlFor="statusFilter" className="block text-sm font-medium text-gray-700 mb-1">
+              状态
+            </label>
+            <select
+              id="statusFilter"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="all">全部状态</option>
+              <option value="published">已发布</option>
+              <option value="draft">待审批</option>
+            </select>
+          </div>
+
+          {/* 分类过滤 */}
+          <div>
+            <label htmlFor="categoryFilter" className="block text-sm font-medium text-gray-700 mb-1">
+              分类
+            </label>
+            <select
+              id="categoryFilter"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+            >
+              <option value="all">全部分类</option>
+              {categories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* 过滤状态显示 */}
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            找到 {totalCases} 个案例
+            {(searchTerm || sourceFilter !== 'all' || statusFilter !== 'all' || categoryFilter !== 'all') && (
+              <button
+                onClick={() => {
+                  setSearchTerm('')
+                  setSourceFilter('all')
+                  setStatusFilter('all')
+                  setCategoryFilter('all')
+                }}
+                className="ml-2 text-blue-600 hover:text-blue-800"
+              >
+                清除过滤
+              </button>
+            )}
+          </div>
+          <div className="text-sm text-gray-500">
+            第 {currentPage} 页，共 {totalPages} 页
+          </div>
+        </div>
+      </div>
+
       {/* 审批控制栏 */}
       <div className="bg-white p-4 rounded-lg shadow mb-6">
         <div className="flex items-center justify-between">
@@ -284,27 +425,42 @@ export default function AdminPage() {
       </div>
 
       {/* 统计信息 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-blue-50 p-4 rounded-lg">
           <h3 className="font-semibold text-blue-800">总案例数</h3>
-          <p className="text-2xl font-bold text-blue-600">{cases.length}</p>
+          <p className="text-2xl font-bold text-blue-600">{totalCases}</p>
         </div>
 
         <div className="bg-green-50 p-4 rounded-lg">
-          <h3 className="font-semibold text-green-800">今日新增</h3>
+          <h3 className="font-semibold text-green-800">已发布</h3>
           <p className="text-2xl font-bold text-green-600">
-            {cases.filter(c => new Date(c.created_at).toDateString() === new Date().toDateString()).length}
+            {cases.filter(c => c.published).length}
           </p>
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <h3 className="font-semibold text-blue-800">总数据源</h3>
-          <p className="text-2xl font-bold text-blue-600">3+</p>
+        <div className="bg-yellow-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-yellow-800">待审批</h3>
+          <p className="text-2xl font-bold text-yellow-600">
+            {cases.filter(c => !c.published).length}
+          </p>
+        </div>
+
+        <div className="bg-purple-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-purple-800">数据源</h3>
+          <p className="text-2xl font-bold text-purple-600">4+</p>
         </div>
       </div>
 
       {/* 案例列表 */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
+        {isLoading && (
+          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+              <span className="text-sm text-gray-600">加载中...</span>
+            </div>
+          </div>
+        )}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
@@ -316,6 +472,9 @@ export default function AdminPage() {
                     onChange={handleSelectAll}
                     className="rounded border-gray-300"
                   />
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">
+                  数据源
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">
                   状态
@@ -344,6 +503,19 @@ export default function AdminPage() {
                       onChange={() => handleCaseSelect(case_.id)}
                       className="rounded border-gray-300"
                     />
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      case_.source_type === 'reddit' ? 'bg-orange-100 text-orange-800' :
+                      case_.source_type === 'producthunt' ? 'bg-purple-100 text-purple-800' :
+                      case_.source_type === 'indiehackers' ? 'bg-blue-100 text-blue-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {case_.source_type === 'reddit' ? 'Reddit' :
+                       case_.source_type === 'producthunt' ? 'ProductHunt' :
+                       case_.source_type === 'indiehackers' ? 'IndieHackers' :
+                       case_.source_type || '未知'}
+                    </span>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -388,6 +560,36 @@ export default function AdminPage() {
             >
               抓取第一批案例
             </button>
+          </div>
+        )}
+
+        {/* 分页控制 */}
+        {totalPages > 1 && (
+          <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-700">
+                显示第 {(currentPage - 1) * 50 + 1} 到 {Math.min(currentPage * 50, totalCases)} 条，共 {totalCases} 条
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => loadCases(currentPage - 1)}
+                  disabled={currentPage === 1 || isLoading}
+                  className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  上一页
+                </button>
+                <span className="px-3 py-1 text-sm">
+                  第 {currentPage} / {totalPages} 页
+                </span>
+                <button
+                  onClick={() => loadCases(currentPage + 1)}
+                  disabled={currentPage === totalPages || isLoading}
+                  className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  下一页
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

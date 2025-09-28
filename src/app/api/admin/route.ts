@@ -2,14 +2,42 @@ import { NextResponse, NextRequest } from 'next/server'
 import { CaseRepository } from '@/lib/supabase'
 
 // 获取所有案例（管理后台用）
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const cases = await CaseRepository.getAllCases()
+    const { searchParams } = new URL(request.url)
+
+    const search = searchParams.get('search') || undefined
+    const sourceType = searchParams.get('sourceType') || undefined
+    const status = searchParams.get('status') || undefined
+    const category = searchParams.get('category') || undefined
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const offset = (page - 1) * limit
+
+    let result
+    if (search || sourceType || status || category) {
+      // 使用过滤查询
+      result = await CaseRepository.getAllCasesWithFilters(search, sourceType, status, category, limit, offset)
+    } else {
+      // 使用原有查询
+      const cases = await CaseRepository.getAllCases(limit, offset)
+      result = { cases, total: cases.length }
+    }
+
+    // 获取分类列表
+    const categories = await CaseRepository.getAllCategories()
 
     return NextResponse.json({
       success: true,
-      data: cases,
-      total: cases.length
+      data: result.cases,
+      total: result.total,
+      categories,
+      pagination: {
+        page,
+        limit,
+        total: result.total,
+        totalPages: Math.ceil(result.total / limit)
+      }
     })
 
   } catch (error) {

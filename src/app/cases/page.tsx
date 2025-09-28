@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import CaseCard from '@/components/CaseCard'
 import { LoadingSkeleton } from '@/components/Loading'
+import Header from '@/components/Header'
 
 interface Case {
   id: number
@@ -357,7 +358,12 @@ function CasesList() {
 
 export default function CasesPage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white/50 backdrop-blur-sm rounded-3xl my-8">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-white via-blue-50 to-indigo-50 font-sans antialiased">
+      {/* Header */}
+      <Header />
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white/50 backdrop-blur-sm rounded-3xl my-8 flex-1">
       {/* Hero Section */}
       <div className="text-center mb-16">
         <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-purple-100 px-4 py-2 rounded-full mb-6">
@@ -437,6 +443,7 @@ export default function CasesPage() {
             了解更多
           </button>
         </div>
+      </div>
       </div>
     </div>
   )

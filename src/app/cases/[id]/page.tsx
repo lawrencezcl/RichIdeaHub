@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Script from 'next/script'
 import UserFeedback from '@/components/UserFeedback'
 import MiniStats from '@/components/MiniStats'
+import Header from '@/components/Header'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -24,8 +25,12 @@ export default async function CaseDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-blue-50">
+      {/* Header */}
+      <Header />
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8 max-w-6xl flex-1">
         {/* 返回按钮 */}
         <div className="mb-6">
           <Link

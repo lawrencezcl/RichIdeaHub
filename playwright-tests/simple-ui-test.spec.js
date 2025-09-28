@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 // Test configuration
-const BASE_URL = 'http://38.147.171.132:3001';
+const BASE_URL = 'http://localhost:3001';
 
 test.describe('Rich Idea Hub Basic UI Tests', () => {
 

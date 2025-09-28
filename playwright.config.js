@@ -7,8 +7,8 @@ module.exports = defineConfig({
   retries: 0,
   reporter: 'list',
   use: {
-    baseURL: 'http://38.147.171.132:3001',
-    trace: 'off',
-    screenshot: 'off',
+    baseURL: 'http://localhost:3001',
+    trace: 'on',
+    screenshot: 'on',
   },
 });

@@ -275,7 +275,7 @@ export class CaseRepository {
     const client = await pool.connect()
     try {
       let query = 'SELECT * FROM cases WHERE 1=1'
-      const params: any[] = []
+      const params: (string | number | boolean)[] = []
       let paramIndex = 1
 
       if (search) {

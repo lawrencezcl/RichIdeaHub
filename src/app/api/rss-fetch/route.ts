@@ -1,6 +1,61 @@
 import { NextResponse } from 'next/server'
 import { Pool } from 'pg'
 
+// Type definitions for RSS data
+interface RSSItem {
+  title?: string
+  content?: string
+  description?: string
+  link?: string
+  pubDate?: string
+  author?: string
+  creator?: string
+  categories?: string[]
+}
+
+interface RSSFeed {
+  items: RSSItem[]
+}
+
+interface FeedInfo {
+  name: string
+  url: string
+  category: string
+  language: string
+}
+
+interface CaseData {
+  title: string
+  description: string
+  income: string
+  time_required: string
+  tools: string
+  steps: string
+  source_url: string
+  raw_content: string
+  published: boolean
+  category: string
+  difficulty: string
+  investment_required: string
+  skills_needed: string
+  target_audience: string
+  potential_risks: string
+  success_rate: string
+  time_to_profit: string
+  scalability: string
+  location_flexible: boolean
+  age_restriction: string
+  revenue_model: string
+  competition_level: string
+  market_trend: string
+  key_metrics: string
+  author: string
+  upvotes: number
+  comments_count: number
+  tags: string[]
+  source_type: string
+}
+
 // Database connection for Vercel environment
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_w9QEDSlLkyT3@ep-jolly-hill-adhlaq48-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
@@ -11,7 +66,7 @@ const pool = new Pool({
 
 // RSS Parser
 class RSSParser {
-  static async parseFeed(feedUrl: string): Promise<any> {
+  static async parseFeed(feedUrl: string): Promise<RSSFeed> {
     try {
       const response = await fetch(feedUrl, {
         headers: {
@@ -34,8 +89,8 @@ class RSSParser {
     }
   }
 
-  private static parseRSSContent(content: string): any[] {
-    const items: any[] = []
+  private static parseRSSContent(content: string): RSSItem[] {
+    const items: RSSItem[] = []
 
     // Extract items from RSS content
     const itemMatches = content.match(/<item[^>]*>([\s\S]*?)<\/item>/gi) || []
@@ -166,7 +221,7 @@ class RSSDataCollector {
     }
   }
 
-  static async insertCase(caseData: any): Promise<number | null> {
+  static async insertCase(caseData: CaseData): Promise<number | null> {
     const client = await pool.connect()
     try {
       const result = await client.query(`
@@ -252,7 +307,7 @@ class RSSDataCollector {
     return hasBusinessContent && !hasBannedContent
   }
 
-  static processRSSItem(item: any, feedInfo: any): any {
+  static processRSSItem(item: RSSItem, feedInfo: FeedInfo): CaseData | null {
     const title = item.title || ''
     const content = item.content || ''
     const link = item.link || ''
@@ -336,10 +391,10 @@ class RSSDataCollector {
     return flexibleKeywords.some(keyword => text.includes(keyword))
   }
 
-  static async collectFromRSSFeeds(): Promise<any[]> {
+  static async collectFromRSSFeeds(): Promise<CaseData[]> {
     console.log('🌐 Starting RSS feed collection from global sources...')
 
-    const allCases: any[] = []
+    const allCases: CaseData[] = []
     let processedFeeds = 0
     let successfulFeeds = 0
 
@@ -350,23 +405,23 @@ class RSSDataCollector {
     for (let i = 0; i < RSS_FEEDS.length; i += batchSize) {
       const batch = RSS_FEEDS.slice(i, i + batchSize)
 
-      const batchPromises = batch.map(async (feed) => {
+      const batchPromises = batch.map(async (feedInfo) => {
         try {
-          console.log(`📡 Fetching RSS feed: ${feed.name}`)
+          console.log(`📡 Fetching RSS feed: ${feedInfo.name}`)
 
-          const feed = await Promise.race([
-            RSSParser.parseFeed(feed.url),
+          const feedData = await Promise.race([
+            RSSParser.parseFeed(feedInfo.url),
             new Promise((_, reject) =>
               setTimeout(() => reject(new Error('Timeout')), 15000)
             )
           ])
 
-          const cases: any[] = []
+          const cases: CaseData[] = []
           const maxItems = 5 // Reduced for Vercel timeout
 
-          for (const item of feed.items.slice(0, maxItems)) {
-            if (this.validateRSSContent(item.title, item.content)) {
-              const processedCase = this.processRSSItem(item, feed)
+          for (const item of (feedData as RSSFeed).items.slice(0, maxItems)) {
+            if (item.title && item.content && this.validateRSSContent(item.title, item.content)) {
+              const processedCase = this.processRSSItem(item, feedInfo)
               if (processedCase) {
                 cases.push(processedCase)
               }
@@ -377,15 +432,15 @@ class RSSDataCollector {
 
           if (cases.length > 0) {
             successfulFeeds++
-            console.log(`✅ ${feed.name}: ${cases.length} cases`)
+            console.log(`✅ ${feedInfo.name}: ${cases.length} cases`)
           } else {
-            console.log(`⚠️ ${feed.name}: No valid cases`)
+            console.log(`⚠️ ${feedInfo.name}: No valid cases`)
           }
 
           return cases
         } catch (error) {
           processedFeeds++
-          console.error(`❌ Failed to process ${feed.name}:`, error instanceof Error ? error.message : error)
+          console.error(`❌ Failed to process ${feedInfo.name}:`, error instanceof Error ? error.message : error)
           return []
         }
       })

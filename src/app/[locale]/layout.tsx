@@ -2,6 +2,7 @@ import Link from "next/link";
 import WebVitals from '@/components/WebVitals';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import GlobalLoading from '@/components/GlobalLoading';
+import GeoTargeting from '@/components/GeoTargeting';
 
 export default async function LocaleLayout({
   children,
@@ -15,6 +16,9 @@ export default async function LocaleLayout({
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-white via-blue-50 to-indigo-50 font-sans antialiased">
+      {/* Geo targeting and hreflang */}
+      <GeoTargeting locale={locale} path="/" />
+
       {/* Performance monitoring */}
       <WebVitals />
 

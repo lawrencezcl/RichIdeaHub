@@ -1,0 +1,77 @@
+# Robots.txt for Rich Idea Hub
+# SEO optimized robots.txt file
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://localhost:3000/sitemap.xml
+
+# Block admin and test pages from indexing
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /test
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Block search pages with parameters to prevent duplicate content
+Disallow: /*?search=*
+Disallow: /*?category=*
+Disallow: /*?difficulty=*
+Disallow: /*?page=*
+
+# Allow specific search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Crawl delay for polite crawling
+Crawl-delay: 1
+
+# Allow major social media crawlers
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Block unwanted bots
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: Sogou spider
+Disallow: /
+
+# Additional security
+Disallow: /*.env$
+Disallow: /*.env.local$
+Disallow: /*.env.development.local$
+Disallow: /*.env.test.local$
+Disallow: /*.env.production.local$
+Disallow: /*.local$
+
+# Performance optimization
+Disallow: /*.css$
+Disallow: /*.js$
+Disallow: /*.json$

@@ -5,6 +5,9 @@ import { Case } from '@/lib/supabase-client'
 import CaseCard from '@/components/CaseCard'
 import { LoadingSkeleton } from '@/components/Loading'
 import { Suspense, useEffect, useState } from 'react'
+import Script from 'next/script'
+import { generateCasesPageMetadata, generateCasesBreadcrumbStructuredData } from '../metadata'
+
 
 function CasesList() {
   const [cases, setCases] = useState<Case[]>([])

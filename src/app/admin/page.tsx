@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { Case } from '@/lib/types'
+import Script from 'next/script'
+import { generateAdminPageMetadata } from '@/lib/page-metadata'
+import { generateBreadcrumbStructuredData } from '@/lib/seo'
+import type { Metadata } from 'next'
+
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -270,7 +275,26 @@ export default function AdminPage() {
 
   // 已认证，显示管理界面
   return (
-    <div className="container mx-auto px-4 py-8">
+    <>
+      {/* Structured Data */}
+      <Script
+        id="admin-breadcrumb-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateBreadcrumbStructuredData([
+            {
+              name: "首页",
+              url: "https://localhost:3000/zh"
+            },
+            {
+              name: "管理后台",
+              url: "https://localhost:3000/admin"
+            }
+          ]))
+        }}
+      />
+
+      <div className="container mx-auto px-4 py-8">
       {/* 头部 */}
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -594,5 +618,6 @@ export default function AdminPage() {
         )}
       </div>
     </div>
+    </>
   )
 }

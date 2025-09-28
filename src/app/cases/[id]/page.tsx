@@ -5,9 +5,34 @@ import Script from 'next/script'
 import UserFeedback from '@/components/UserFeedback'
 import MiniStats from '@/components/MiniStats'
 import Header from '@/components/Header'
+import { generateCaseDetailMetadata, generateCaseDetailBreadcrumbStructuredData } from '@/app/[locale]/metadata'
+import type { Metadata } from 'next'
 
 interface Props {
   params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params
+  const caseId = parseInt(id)
+
+  if (isNaN(caseId)) {
+    return {
+      title: '案例未找到 - Rich Idea Hub',
+      description: '请求的案例不存在或已被删除。'
+    }
+  }
+
+  const case_ = await CaseRepository.getCaseById(caseId)
+
+  if (!case_) {
+    return {
+      title: '案例未找到 - Rich Idea Hub',
+      description: '请求的案例不存在或已被删除。'
+    }
+  }
+
+  return generateCaseDetailMetadata(case_, 'zh')
 }
 
 export default async function CaseDetailPage({ params }: Props) {
@@ -369,6 +394,11 @@ export default async function CaseDetailPage({ params }: Props) {
           </div>
         </footer>
       </div>
+
+      {/* 面包屑结构化数据 */}
+      <Script id="breadcrumb-structured-data" type="application/ld+json">
+        {JSON.stringify(generateCaseDetailBreadcrumbStructuredData('zh', case_.id.toString(), case_.title))}
+      </Script>
 
       {/* 结构化数据 (JSON-LD) */}
       <Script id="structured-data" type="application/ld+json">

@@ -157,6 +157,91 @@ export class CaseRepository {
     }
   }
 
+  // 更新案例的详细数据
+  static async updateCaseData(id: number, data: {
+    income: string
+    time_required: string
+    tools: string
+    steps: string
+    category: string
+    difficulty: string
+    investment_required: string
+    skills_needed: string
+    target_audience: string
+    potential_risks: string
+    success_rate: string
+    time_to_profit: string
+    scalability: string
+    location_flexible: boolean
+    age_restriction: string
+    revenue_model: string
+    competition_level: string
+    market_trend: string
+    key_metrics: string
+    tags: string[]
+  }): Promise<void> {
+    const client = await pool.connect()
+    try {
+      const result = await client.query(`
+        UPDATE cases SET
+          income = $1,
+          time_required = $2,
+          tools = $3,
+          steps = $4,
+          category = $5,
+          difficulty = $6,
+          investment_required = $7,
+          skills_needed = $8,
+          target_audience = $9,
+          potential_risks = $10,
+          success_rate = $11,
+          time_to_profit = $12,
+          scalability = $13,
+          location_flexible = $14,
+          age_restriction = $15,
+          revenue_model = $16,
+          competition_level = $17,
+          market_trend = $18,
+          key_metrics = $19,
+          tags = $20
+        WHERE id = $21
+      `, [
+        data.income,
+        data.time_required,
+        data.tools,
+        data.steps,
+        data.category,
+        data.difficulty,
+        data.investment_required,
+        data.skills_needed,
+        data.target_audience,
+        data.potential_risks,
+        data.success_rate,
+        data.time_to_profit,
+        data.scalability,
+        data.location_flexible,
+        data.age_restriction,
+        data.revenue_model,
+        data.competition_level,
+        data.market_trend,
+        data.key_metrics,
+        data.tags,
+        id
+      ])
+
+      if (result.rowCount === 0) {
+        console.warn(`未找到ID为 ${id} 的案例进行更新`)
+      } else {
+        console.log(`成功更新案例 ${id} 的详细数据`)
+      }
+    } catch (error) {
+      console.error(`更新案例 ${id} 数据失败:`, error)
+      throw new Error(`更新案例数据失败: ${(error as Error).message}`)
+    } finally {
+      client.release()
+    }
+  }
+
   // 检查案例是否已存在（根据source_url）
   static async caseExists(sourceUrl: string): Promise<boolean> {
     const client = await pool.connect()
